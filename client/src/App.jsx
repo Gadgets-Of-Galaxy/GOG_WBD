@@ -130,58 +130,47 @@ useEffect(() => {
 }, []);
 
 
-  return (
-    <Router>
+return (
+  <Router>
     <div>
       <Routes>
-        <Route path="/" element={<Home loginuser={user}/>} />
+        
+        {/* Common Routes */}
+        <Route path="/" element={<Home loginuser={user} />} />
         <Route path="/login" element={<Login setLoginUser={setLoginUser} />} />
         <Route path="/product/:productId" element={<ProductDetailsPage user={loginuser} />} />
+        <Route path="/category" element={<Category categories={Categorydata} user={loginuser} products={productsData} />} />
+        <Route path="/Aboutus" element={<Aboutus user={loginuser} />} />
+        <Route path="/Contactus" element={<Contactus user={loginuser} />} />
+
+        {/* User Routes */}
         <Route
-            path="/myAccount"
-            element={loginuser ? <MyAccount user={loginuser} /> : <Navigate to="/login" />}
-          />
-        <Route path="/editProfile" element={<EditProfile user={loginuser}/>} />
-        <Route path='/wishlist' element={loginuser ? <MyWishlists user={loginuser}/> : <Navigate to="/login" />} />
-        <Route path='/cart' element={loginuser ? <MyCart user={loginuser}/> : <Navigate to="/login" />} />
-        <Route path='/myOrders' element={loginuser ? <MyOrders user={loginuser}/> : <Navigate to="/login" />} />
-        <Route path="/category" element={<Category categories={Categorydata} user={loginuser} products={productsData}/>} />
-        <Route path='/checkout' element={loginuser ? <CheckoutPage user={loginuser}/> : <Navigate to="/login" />}/>
-        <Route path='/Aboutus' element={<Aboutus user={loginuser}/>} />
-        <Route path='/Contactus' element={<Contactus user={loginuser}/>} />
+          path="/myAccount"
+          element={isUser ? <MyAccount user={loginuser} /> : <Navigate to="/login" />}
+        />
+        <Route path="/editProfile" element={<EditProfile user={loginuser} />} />
+        <Route path="/wishlist" element={isUser ? <MyWishlists user={loginuser} /> : <Navigate to="/login" />} />
+        <Route path="/cart" element={isUser ? <MyCart user={loginuser} /> : <Navigate to="/login" />} />
+        <Route path="/myOrders" element={isUser ? <MyOrders user={loginuser} /> : <Navigate to="/login" />} />
+        <Route path="/checkout" element={isUser ? <CheckoutPage user={loginuser} /> : <Navigate to="/login" />} />
 
-        <Route path='/admin' element={<AdminDashboard />} />
-        <Route path='/admin/productDetails' element={<Products products={productsData} />}/>
-        <Route path='/admin/userDetails' element={<Users users={users} />} />
-        <Route path='/admin/ordersList' element={<OrdersList orders={orders} />} />
-        <Route path='/admin/addProduct' element={<AddProduct />} />
-        <Route path='/admin/messages' element={<AdminMessages messages={messages} />} />
+        {/* Admin Routes */}
+        <Route
+          path="/admin"
+          element={isAdmin ? <AdminDashboard /> : <Navigate to="/login" />}
+        />
+        <Route path="/admin/productDetails" element={isAdmin ? <Products products={productsData} /> : <Navigate to="/login" />} />
+        <Route path="/admin/userDetails" element={isAdmin ? <Users users={users} /> : <Navigate to="/login" />} />
+        <Route path="/admin/ordersList" element={isAdmin ? <OrdersList orders={orders} /> : <Navigate to="/login" />} />
+        <Route path="/admin/addProduct" element={isAdmin ? <AddProduct /> : <Navigate to="/login" />} />
+        <Route path="/admin/messages" element={isAdmin ? <AdminMessages messages={messages} /> : <Navigate to="/login" />} />
 
-        {/* {isAdmin && (
-            <Route path="/admin" element={<AdminDashboard />} />
-          )}
-          {isAdmin && (
-            <Route path="/admin/productDetails" element={<Products products={productsData} />} />
-          )}
-          {isAdmin && (
-            <Route path="/admin/userDetails" element={<Users users={users} />} />
-          )}
-          {isAdmin && (
-            <Route path="/admin/ordersList" element={<OrdersList orders={orders} />} />
-          )}
-          {isAdmin && (
-            <Route path="/admin/addProduct" element={<AddProduct />} />
-          )}
-          {isAdmin && (
-            <Route path="/admin/messages" element={<AdminMessages messages={messages} />} />
-          )} */}
-
-
-        <Route path='/seller' element={<SellerDashboard />} />
+        {/* Seller Routes */}
+        <Route path="/seller" element={isSeller ? <SellerDashboard /> : <Navigate to="/login" />} />
       </Routes>
-      </div>
-    </Router>
-  )
+    </div>
+  </Router>
+);
 }
 
 export default App

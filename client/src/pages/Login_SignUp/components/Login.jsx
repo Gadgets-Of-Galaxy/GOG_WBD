@@ -53,13 +53,13 @@ export const Login = ({ setLoginUser }) => {
                     (formData.role === "Admin" && isAdmin)
                 ) {
                     switch (formData.role) {
-                        case "user":
+                        case "User":
                             navigate('/myAccount');
                             break;
-                        case "seller":
+                        case "Seller":
                             navigate('/seller');
                             break;
-                        case "admin":
+                        case "Admin":
                             navigate('/admin');
                             break;
                         default:
@@ -122,9 +122,9 @@ export const Login = ({ setLoginUser }) => {
         setFormData({
             ...formData,
             role: value,
-            isUser: value === "user",
-            isSeller: value === "seller",
-            isAdmin: value === "admin",
+            isUser: value === "User",
+            isSeller: value === "Seller",
+            isAdmin: value === "Admin",
         });
     } else {
         setFormData({

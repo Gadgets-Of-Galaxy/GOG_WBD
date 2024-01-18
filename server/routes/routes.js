@@ -58,13 +58,13 @@ router.post('/api/register', async (req, res) => {
 
         let userRoles = { isUser: false, isSeller: false, isAdmin: false };
         switch (role) {
-            case 'user':
+            case 'User':
                 userRoles.isUser = true;
                 break;
-            case 'seller':
+            case 'Seller':
                 userRoles.isSeller = true;
                 break;
-            case 'admin':
+            case 'Admin':
                 userRoles.isAdmin = true;
                 break;
             default:
