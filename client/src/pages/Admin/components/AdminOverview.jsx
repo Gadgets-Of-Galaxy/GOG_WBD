@@ -9,7 +9,7 @@ export const AdminOverview = () => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/admin/checkouts')
+                const response = await axios.get('http://localhost:5000/api/checkouts')
                 const data = await response.data.checkouts;
                 setOrders(data);
             } catch (error) {

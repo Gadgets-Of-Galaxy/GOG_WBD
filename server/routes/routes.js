@@ -49,7 +49,7 @@ router.post('/api/register', async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ message: 'Email already exists' });
         }
-        
+
         const encryptPassword = (password) => {
             return bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
         };
@@ -111,12 +111,12 @@ router.post('/api/login', async (req, res) => {
             isAdmin: user.isAdmin
         }, JWT_SECRET_KEY);
 
-        res.status(200).json({ 
-            message: 'login successful', 
-            token, user, 
+        res.status(200).json({
+            message: 'login successful',
+            token, user,
             isUser: user.isUser,
             isSeller: user.isSeller,
-            isAdmin: user.isAdmin 
+            isAdmin: user.isAdmin
         });
 
         console.log("login success");
@@ -231,6 +231,31 @@ router.get('/api/carts/:userId', async (req, res) => {
         res.status(200).json({ cartItems: userCart.items });
     } catch (error) {
         console.error('Error fetching user cart items:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.post('/api/checkout', async (req, res) => {
+    try {
+        const { totalQty, totalCost, items, user } = req.body;
+        // console.log(items);
+        const checkout = new Checkout({
+            totalQty,
+            totalCost,
+            items,
+            user
+        });
+        await checkout.save();
+        for (const item of items) {
+            await Product.updateOne(
+                { _id: item.productId },
+                { $inc: { sold: item.qty } }
+            );
+        }
+        res.status(201).json({ message: 'Checkout successful', checkout });
+        await Cart.deleteMany({ user: user });
+    } catch (error) {
+        console.error('Error creating checkout:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
@@ -359,7 +384,7 @@ router.post('/api/editprofile/:id', async (req, res) => {
 });
 
 // used authenticateToken middleware
-router.get('/api/users/:id',authenticateToken, async (req, res) => {
+router.get('/api/users/:id', authenticateToken, async (req, res) => {
     try {
         const userId = req.params.id;
         const user = await User.findById(userId);
@@ -393,6 +418,151 @@ router.post('/api/contactus', (req, res) => {
     newContactUs.save()
         .then(() => res.status(200).send('Message sent to Admin!'))
         .catch((error) => res.status(500).send(`Error: ${error}`));
+});
+
+
+const Razorpay = require("razorpay");
+const crypto = require("crypto");
+
+router.post("/api/payment/orders", async (req, res) => {
+    try {
+        const instance = new Razorpay({
+            key_id: "rzp_test_Gj1HHlsQFVyVat",
+            key_secret: "CPbCpVzcBIiDUgf3QKknEDcn",
+        });
+
+        const options = {
+            amount: req.body.amount * 100,
+            currency: "INR",
+            receipt: crypto.randomBytes(10).toString("hex"),
+        };
+
+        instance.orders.create(options, (error, order) => {
+            if (error) {
+                console.log(error);
+                return res.status(500).json({ message: "Something Went Wrong!" });
+            }
+            res.status(200).json({ data: order });
+        });
+    } catch (error) {
+        res.status(500).json({ message: "Internal Server Error!" });
+        console.log(error);
+    }
+});
+
+router.post("/api/payment/verify", async (req, res) => {
+    try {
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
+            req.body;
+        const sign = razorpay_order_id + "|" + razorpay_payment_id;
+        const expectedSign = crypto
+            .createHmac("sha256", process.env.KEY_SECRET)
+            .update(sign.toString())
+            .digest("hex");
+
+        if (razorpay_signature === expectedSign) {
+            return res.status(200).json({ message: "Payment verified successfully" });
+        } else {
+            return res.status(400).json({ message: "Invalid signature sent!" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: "Internal Server Error!" });
+        console.log(error);
+    }
+});
+
+const moment = require('moment');
+router.get('/api/admin/sales/:period', async (req, res) => {
+    try {
+        const { period } = req.params;
+
+        const endDate = moment();
+        let startDate;
+
+        switch (period) {
+            case 'day':
+                startDate = moment().subtract(1, 'days');
+                break;
+            case 'week':
+                startDate = moment().subtract(1, 'weeks');
+                break;
+            case 'month':
+                startDate = moment().subtract(1, 'months');
+                break;
+            case 'year':
+                startDate = moment().subtract(1, 'years');
+                break;
+            default:
+                return res.status(400).json({ error: 'Invalid time period' });
+        }
+
+        const salesData = await Checkout.aggregate([
+            {
+                $match: {
+                    createdAt: {
+                        $gte: startDate.toDate(),
+                        $lt: endDate.toDate(),
+                    },
+                },
+            },
+            {
+                $group: {
+                    _id: {
+                        $dateToString: { format: '%Y-%m-%d', date: '$createdAt' },
+                    },
+                    totalSales: { $sum: '$totalCost' },
+                },
+            },
+            {
+                $sort: { _id: 1 },
+            },
+        ]);
+
+        const labels = salesData.map((item) => item._id);
+        const data = salesData.map((item) => item.totalSales);
+
+        res.json({ labels, data });
+    } catch (error) {
+        console.error('Error fetching sales data:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.get('/api/admin/orders', async (req, res) => {
+    try {
+        const checkouts = await Checkout.find();
+        res.status(200).json(checkouts);
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.get('/api/admin/messages', async (req, res) => {
+    try {
+        const messages = await ContactUs.find({});
+        // console.log(messages);
+        res.status(200).json(messages);
+    } catch (error) {
+        console.error('Error fetching messages:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
+router.delete('/api/admin/contactUs/:id', async (req, res) => {
+    const messageId = req.params.id;
+    try {
+        const deletedMessage = await ContactUs.findByIdAndDelete(messageId);
+
+        if (!deletedMessage) {
+            return res.status(404).json({ message: 'Message not found' });
+        }
+
+        res.status(200).json({ message: 'Message deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting message:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 });
 
 module.exports = router;
