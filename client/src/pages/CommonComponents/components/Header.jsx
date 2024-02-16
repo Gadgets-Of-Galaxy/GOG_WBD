@@ -134,12 +134,12 @@ export const Header = ({ user, onFilteredProducts }) => {
               <li>Shop</li>
               <li>Gadgets</li>
               <li>{ !user && <Link to="/login">Login</Link> }</li>
-              <li>
+              {/* <li>
                 <Link to="/seller">Seller</Link>
               </li>
               <li>
                 <Link to="/admin">Admin</Link>
-              </li>
+              </li> */}
             </ul>
           </div>
         </div>

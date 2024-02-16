@@ -5,6 +5,7 @@ const Product = require('../models/Product');
 const Checkout = require('../models/Checkout');
 const Cart = require('../models/Cart');
 const ContactUs = require('../models/ContactUs');
+const Category = require('../models/Category');
 
 const router = express();
 
@@ -125,6 +126,14 @@ router.post('/api/login', async (req, res) => {
     }
 });
 
+router.get('/api/categories', async (req, res) => {
+    try {
+        const categories = await Category.find({});
+        res.json({ categories });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch categories' });
+    }
+});
 
 router.get('/api/products', async (req, res) => {
     try {
@@ -553,11 +562,9 @@ router.delete('/api/admin/contactUs/:id', async (req, res) => {
     const messageId = req.params.id;
     try {
         const deletedMessage = await ContactUs.findByIdAndDelete(messageId);
-
         if (!deletedMessage) {
             return res.status(404).json({ message: 'Message not found' });
         }
-
         res.status(200).json({ message: 'Message deleted successfully' });
     } catch (error) {
         console.error('Error deleting message:', error);

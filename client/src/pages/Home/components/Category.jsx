@@ -5,16 +5,22 @@ import '../styles/Category.css';
 import { Link } from 'react-router-dom';
 
 export const Category = ({ categories, products, user }) => {
+  // console.log("Categories", categories);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
 
-  const uniqueCategories = categories.filter(
-    (category, index, self) =>
-      index === self.findIndex((c) => c.title === category.title)
-  );
+  const uniqueCategories = Array.isArray(categories)
+    ? categories.filter(
+      (category, index, self) =>
+        index === self.findIndex((c) => c.title === category.title)
+    )
+    : [];
 
 
-  const brands = ['Apple', 'Boat', 'Sony', 'Samsung', 'Oppo', 'Asus', 'Qubo', 'Vivo', 'Noise', 'CP PLUS'];
+const allBrands = products.map(product => product.brand);
+const uniqueBrandsSet = new Set(allBrands);
+const brands = Array.from(uniqueBrandsSet);
+console.log(brands);
 
   const priceRanges = ['0-100', '100-500', '500-1000'];
 
@@ -22,7 +28,6 @@ export const Category = ({ categories, products, user }) => {
   const [sortBy, setSortBy] = useState('');
   const [productsToShow, setProductsToShow] = useState(12);
   const [sortedProducts, setSortedProducts] = useState(products);
-
 
   const filteringOptions = [
     ...brands.map((brand, index) => ({ id: `brand${index + 1}`, label: brand })),
@@ -87,13 +92,12 @@ export const Category = ({ categories, products, user }) => {
     );
   };
 
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [searchedProducts, setSearchedProducts] = useState(products);
 
   const handleFilteredProducts = (filteredData) => {
-    setFilteredProducts(filteredData);
-    setSortedProducts([]);
+    setSearchedProducts(filteredData);
   };
-
+  console.log(searchedProducts);
 
   return (
     <>
@@ -178,35 +182,19 @@ export const Category = ({ categories, products, user }) => {
         </div>
         <div className="products">
           <div className="products main flexwrap">
-            { (filteredProducts && filteredProducts.length > 0)
-              ? filteredProducts.slice(0, productsToShow).map((product) => (
-                <div className="item" key={ product._id }>
-                  <img src={ product.imagePath } alt={ product.name } />
-                  <Link to={ `/product/${product._id.$oid}` } className="product-link">
-                    <h3 className="product-title">{ product.title }</h3>
-                  </Link>
-                  <p>
-                    <strong style={ { textDecoration: 'line-through' } }>
-                      MRP: Rs.{ product.mrp }
-                    </strong>
-                  </p>
-                  <p>Price: Rs.{ product.price }</p>
-                </div>
-              ))
-              : sortedProducts.slice(0, productsToShow).map((product) => (
-                <div className="item" key={ product._id }>
-                  <img src={ product.imagePath } alt={ product.name } />
-                  <Link to={ `/product/${product._id.$oid}` } className="product-link">
-                    <h3 className="product-title">{ product.name }</h3>
-                  </Link>
-                  <p>
-                    <strong style={ { textDecoration: 'line-through' } }>
-                      MRP: Rs.{ product.mrp }
-                    </strong>
-                  </p>
-                  <p>Price: Rs.{ product.price }</p>
-                </div>
-              )) }
+            { searchedProducts && searchedProducts.length > 0 && searchedProducts.slice(0, productsToShow).map((product) => (
+              <div className="item" key={ product._id }>
+                <img src={ product.imagePath } alt={ product.name } />
+                <Link to={ `/product/${product._id.$oid}` } className="product-link">
+                  <h3 className="product-title">{ product.title }</h3>
+                </Link>
+                <p>
+                  <strong style={ { textDecoration: 'line-through' } }>MRP: Rs.{ product.mrp }</strong>
+                </p>
+                <p>Price: Rs.{ product.price }</p>
+              </div>
+            )) }
+
           </div>
         </div>
 

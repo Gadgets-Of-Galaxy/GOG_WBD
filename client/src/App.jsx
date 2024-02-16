@@ -19,16 +19,8 @@ import {MyOrders} from './pages/Home/components/MyOrders';
 import {CheckoutPage} from './pages/Home/components/CheckoutPage';
 import {Aboutus} from './pages/Home/components/Aboutus';
 import {Contactus} from './pages/Home/components/Contactus';
-
-import messagesData from '../DumpDatabase/contactus.json';
-import productsData from '../DumpDatabase/products.json';
-import usersData from '../DumpDatabase/users.json';
-// import wishlists from '../DumpDatabase/wishlists.json';
-// import cartsData from '../DumpDatabase/carts.json';
-import ordersData from '../DumpDatabase/checkouts.json';
 import { Login } from './pages/Login_SignUp/components/Login';
 import ProductDetailsPage from './pages/Home/components/ProductDetailsPage';
-import Categorydata from '../DumpDatabase/categories.json'
 
 import { SellerDashboard } from './pages/Seller/components/SellerDashboard';
 
@@ -36,7 +28,9 @@ import axios from "axios";
 
 function App() {
   const [user, setUser] = useState(null);
+  const [products, setProducts] = useState(null);
   const [users, setUsers] = useState(null);
+  const [categories, setCategories] = useState(null);
   const [orders, setOrders] = useState(null);
   const [messages, setMessages] = useState(null);
   const storedUser = JSON.parse(localStorage.getItem('loggedInUser'));
@@ -82,6 +76,30 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/products/');
+        setProducts(response.data.products);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+    fetchProducts();
+  }, []);
+  
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/categories');
+        setCategories(response.data.categories);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  useEffect(() => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/admin/orders/');
@@ -98,7 +116,6 @@ function App() {
       try {
         const response = await axios.get('http://localhost:5000/api/admin/messages/');
         setMessages(response.data);
-        // console.log(response.data);
       } catch (error) {
         console.error('Error fetching admin messages:', error);
       }
@@ -130,47 +147,58 @@ useEffect(() => {
 }, []);
 
 
-return (
-  <Router>
+  return (
+    <Router>
     <div>
       <Routes>
-        
-        {/* Common Routes */}
-        <Route path="/" element={<Home loginuser={user} />} />
+        <Route path="/" element={<Home loginuser={user}/>} />
         <Route path="/login" element={<Login setLoginUser={setLoginUser} />} />
         <Route path="/product/:productId" element={<ProductDetailsPage user={loginuser} />} />
-        <Route path="/category" element={<Category categories={Categorydata} user={loginuser} products={productsData} />} />
-        <Route path="/Aboutus" element={<Aboutus user={loginuser} />} />
-        <Route path="/Contactus" element={<Contactus user={loginuser} />} />
-
-        {/* User Routes */}
         <Route
-          path="/myAccount"
-          element={isUser ? <MyAccount user={loginuser} /> : <Navigate to="/login" />}
-        />
-        <Route path="/editProfile" element={<EditProfile user={loginuser} />} />
-        <Route path="/wishlist" element={isUser ? <MyWishlists user={loginuser} /> : <Navigate to="/login" />} />
-        <Route path="/cart" element={isUser ? <MyCart user={loginuser} /> : <Navigate to="/login" />} />
-        <Route path="/myOrders" element={isUser ? <MyOrders user={loginuser} /> : <Navigate to="/login" />} />
-        <Route path="/checkout" element={isUser ? <CheckoutPage user={loginuser} /> : <Navigate to="/login" />} />
+            path="/myAccount"
+            element={loginuser ? <MyAccount user={loginuser} /> : <Navigate to="/login" />}
+          />
+        <Route path="/editProfile" element={<EditProfile user={loginuser}/>} />
+        <Route path='/wishlist' element={loginuser ? <MyWishlists user={loginuser}/> : <Navigate to="/login" />} />
+        <Route path='/cart' element={loginuser ? <MyCart user={loginuser}/> : <Navigate to="/login" />} />
+        <Route path='/myOrders' element={loginuser ? <MyOrders user={loginuser}/> : <Navigate to="/login" />} />
+        <Route path="/category" element={<Category categories={categories} user={loginuser} products={products}/>} />
+        <Route path='/checkout' element={loginuser ? <CheckoutPage user={loginuser}/> : <Navigate to="/login" />}/>
+        <Route path='/Aboutus' element={<Aboutus user={loginuser}/>} />
+        <Route path='/Contactus' element={<Contactus user={loginuser}/>} />
 
-        {/* Admin Routes */}
-        <Route
-          path="/admin"
-          element={isAdmin ? <AdminDashboard /> : <Navigate to="/login" />}
-        />
-        <Route path="/admin/productDetails" element={isAdmin ? <Products products={productsData} /> : <Navigate to="/login" />} />
-        <Route path="/admin/userDetails" element={isAdmin ? <Users users={users} /> : <Navigate to="/login" />} />
-        <Route path="/admin/ordersList" element={isAdmin ? <OrdersList orders={orders} /> : <Navigate to="/login" />} />
-        <Route path="/admin/addProduct" element={isAdmin ? <AddProduct /> : <Navigate to="/login" />} />
-        <Route path="/admin/messages" element={isAdmin ? <AdminMessages messages={messages} /> : <Navigate to="/login" />} />
+        <Route path='/admin' element={<AdminDashboard />} />
+        <Route path='/admin/productDetails' element={<Products products={products} />}/>
+        <Route path='/admin/userDetails' element={<Users users={users} />} />
+        <Route path='/admin/ordersList' element={<OrdersList orders={orders} />} />
+        <Route path='/admin/addProduct' element={<AddProduct />} />
+        <Route path='/admin/messages' element={<AdminMessages messages={messages} />} />
 
-        {/* Seller Routes */}
-        <Route path="/seller" element={isSeller ? <SellerDashboard /> : <Navigate to="/login" />} />
+        {/* {isAdmin && (
+            <Route path="/admin" element={<AdminDashboard />} />
+          )}
+          {isAdmin && (
+            <Route path="/admin/productDetails" element={<Products products={productsData} />} />
+          )}
+          {isAdmin && (
+            <Route path="/admin/userDetails" element={<Users users={users} />} />
+          )}
+          {isAdmin && (
+            <Route path="/admin/ordersList" element={<OrdersList orders={orders} />} />
+          )}
+          {isAdmin && (
+            <Route path="/admin/addProduct" element={<AddProduct />} />
+          )}
+          {isAdmin && (
+            <Route path="/admin/messages" element={<AdminMessages messages={messages} />} />
+          )} */}
+
+
+        <Route path='/seller' element={<SellerDashboard />} />
       </Routes>
-    </div>
-  </Router>
-);
+      </div>
+    </Router>
+  )
 }
 
 export default App

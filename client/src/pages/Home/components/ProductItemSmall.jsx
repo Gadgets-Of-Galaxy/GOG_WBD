@@ -8,7 +8,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 
 export const ProductItemSmall = (props) => {
-    const user = props.user;
+    const user = props.user ? props.user : null;
     const productId = props.product._id;
     const imagePath = props.product.imagePath;
     const price = props.product.price;
