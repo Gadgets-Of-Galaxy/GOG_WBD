@@ -7,12 +7,72 @@ const Cart = require('../models/Cart');
 const ContactUs = require('../models/ContactUs');
 const Category = require('../models/Category');
 
+const { uploadToCloudinary, removeFromCloudinary } = require('../routes/cloudinary');
+
+const multer = require('multer');
+const storage = multer.diskStorage({})
+const upload = multer({ storage: storage });
+
 const router = express();
 
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const JWT_SECRET_KEY = 'jwt_secret_key';
+
+router.post('/api/seller/addproduct', upload.fields([
+    { name: 'imagePath', maxCount: 1 },
+    { name: 'imagethumbnail1', maxCount: 1 },
+    { name: 'imagethumbnail2', maxCount: 1 },
+    { name: 'imagethumbnail3', maxCount: 1 }
+]), async (req, res) => {
+    console.log(req.body);
+    const files = req.files;
+    // console.log(files);
+    try {
+        // Upload each image to Cloudinary and get the URLs
+        const cloudinaryResponses = await Promise.all([
+            uploadToCloudinary(files['imagePath'][0].path, req.body.productCode),
+            uploadToCloudinary(files['imagethumbnail1'][0].path, req.body.productCode),
+            uploadToCloudinary(files['imagethumbnail2'][0].path, req.body.productCode),
+            uploadToCloudinary(files['imagethumbnail3'][0].path, req.body.productCode)
+        ]);
+
+        // Destructure the responses to get the URLs
+        const [imagePathResponse, thumbnail1Response, thumbnail2Response, thumbnail3Response] = cloudinaryResponses;
+
+        // Create a new Product instance with the uploaded image URLs
+        const newProduct = new Product({
+            productCode: req.body.productCode,
+            title: req.body.title,
+            imagePath: imagePathResponse.url,
+            imagethumbnail1: thumbnail1Response.url,
+            imagethumbnail2: thumbnail2Response.url,
+            imagethumbnail3: thumbnail3Response.url,
+            description: req.body.description,
+            features1: req.body.features1,
+            features2: req.body.features2,
+            features3: req.body.features3,
+            features4: req.body.features4,
+            mrp: req.body.mrp,
+            price: req.body.price,
+            reviewed: req.body.reviewed,
+            sold: req.body.sold,
+            stock: req.body.stock,
+            brand: req.body.brand,
+            manufacturer: req.body.manufacturer,
+            available: req.body.available,
+            category: req.body.category,
+        });
+
+        // Save the new product to the database
+        await newProduct.save();
+        res.status(201).send('Image uploaded successfully!');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
+});
 
 router.get('/api/userData', (req, res) => {
     console.log("userdata");
@@ -42,9 +102,7 @@ const authenticateToken = (req, res, next) => {
 };
 
 router.post('/api/register', async (req, res) => {
-    // console.log("req.body", req.body);
-
-    const { name, email, password, confirmPassword, role } = req.body;
+    const { name, email, password } = req.body;
     try {
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -58,20 +116,7 @@ router.post('/api/register', async (req, res) => {
         const hashedPassword = encryptPassword(password);
 
         let userRoles = { isUser: false, isSeller: false, isAdmin: false };
-        switch (role) {
-            case 'User':
-                userRoles.isUser = true;
-                break;
-            case 'Seller':
-                userRoles.isSeller = true;
-                break;
-            case 'Admin':
-                userRoles.isAdmin = true;
-                break;
-            default:
-                userRoles.isUser = true;
-                break;
-        }
+        userRoles.isUser = true;
 
         const newUser = new User({
             name,
@@ -97,13 +142,10 @@ router.post('/api/login', async (req, res) => {
         if (!user) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
-
         const passwordMatch = bcrypt.compareSync(password, user.password);
-
         if (!passwordMatch) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
-        console.log("role: ", user);
         const token = jwt.sign({
             email: user.email,
             userId: user._id,
@@ -481,6 +523,7 @@ router.post("/api/payment/verify", async (req, res) => {
 });
 
 const moment = require('moment');
+const Seller = require('../models/Seller');
 router.get('/api/admin/sales/:period', async (req, res) => {
     try {
         const { period } = req.params;
@@ -569,6 +612,100 @@ router.delete('/api/admin/contactUs/:id', async (req, res) => {
     } catch (error) {
         console.error('Error deleting message:', error);
         res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
+
+
+router.post('/api/sellerregister', async (req, res) => {
+    try {
+        const { username, email, password, companyName, address } = req.body;
+        const existingSeller = await Seller.findOne({ email });
+        if (existingSeller) {
+            return res.status(400).json({ message: 'Seller already exists' });
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newSeller = new Seller({
+            username,
+            email,
+            password: hashedPassword,
+            companyName,
+            address
+        });
+        await newSeller.save();
+        newSeller.isSeller = true;
+        await newSeller.save();
+
+        res.status(201).json({ message: 'Seller registered successfully' });
+    } catch (error) {
+        console.error('Registration error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+router.post('/api/sellerlogin', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const seller = await Seller.findOne({ email });
+        if (!seller) {
+            return res.status(404).json({ message: 'Seller not found' });
+        }
+        const passwordMatch = await bcrypt.compare(password, seller.password);
+        if (!passwordMatch) {
+            return res.status(401).json({ message: 'Invalid credentials' });
+        }
+        const token = jwt.sign({ sellerId: seller._id }, 'your-secret-key', { expiresIn: '1h' });
+
+        res.status(200).json({ message: 'Login successful', token });
+    } catch (error) {
+        console.error('Login error:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
+
+
+
+router.get('/api/sellers', async (req, res) => {
+    try {
+        const sellers = await Seller.find({});
+        res.json({ sellers });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch sellers' });
+    }
+});
+
+router.put('/api/sellers/:id/approve', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const seller = await Seller.findById(id);
+        if (!seller) {
+            return res.status(404).json({ message: 'Seller not found' });
+        }
+        seller.approved = true;
+        await seller.save();
+        return res.status(200).json({ message: 'Seller approved successfully', seller });
+    } catch (error) {
+        console.error('Error approving seller:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+router.put('/api/sellers/:id/revoke', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const seller = await Seller.findById(id);
+        if (!seller) {
+            return res.status(404).json({ message: 'Seller not found' });
+        }
+        seller.approved = false;
+        await seller.save();
+        return res.status(200).json({ message: 'Seller approval revoked successfully', seller });
+    } catch (error) {
+        console.error('Error revoking seller approval:', error);
+        return res.status(500).json({ message: 'Internal server error' });
     }
 });
 

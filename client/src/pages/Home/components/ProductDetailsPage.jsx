@@ -17,6 +17,7 @@ const ProductDetailsPage = ({ user }) => {
             try {
                 const response = await axios.get(`http://localhost:5000/api/products/${productId}`);
                 setProduct(response.data.product);
+                // console.log(product);
                 setCurrentImage(response.data.product.imagePath);
             } catch (error) {
                 console.error("Error fetching product details:", error);
@@ -68,32 +69,32 @@ const ProductDetailsPage = ({ user }) => {
 
     return (
         <div>
-            <Header user={user}/>
+            {/* <Header user={user}/> */}
             { product && (
                 <div className="crd-wrpr">
                     <div className="crd">
                         <div className="prd-imgs">
                             <div className="img-dsply">
-                                <img src={ `/${currentImage}` } alt="" />
+                                <img src={ `${currentImage}` } alt="" />
                             </div>
                             <div className="img-shwcse">
                                 <img
-                                    src={ `/${product.imagePath}` }
+                                    src={ `${product.imagePath}` }
                                     alt=""
                                     onClick={ () => handleThumbnailClick(product.imagePath) }
                                 />
                                 <img
-                                    src={ `/${product.imagethumbnail1}` }
+                                    src={ `${product.imagethumbnail1}` }
                                     alt=""
                                     onClick={ () => handleThumbnailClick(product.imagethumbnail1) }
                                 />
                                 <img
-                                    src={ `/${product.imagethumbnail2}` }
+                                    src={ `${product.imagethumbnail2}` }
                                     alt=""
                                     onClick={ () => handleThumbnailClick(product.imagethumbnail2) }
                                 />
                                 <img
-                                    src={ `/${product.imagethumbnail3}` }
+                                    src={ `${product.imagethumbnail3}` }
                                     alt=""
                                     onClick={ () => handleThumbnailClick(product.imagethumbnail3) }
                                 />

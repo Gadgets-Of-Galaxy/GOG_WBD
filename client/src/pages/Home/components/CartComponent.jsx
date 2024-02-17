@@ -65,7 +65,7 @@ export const CartComponent = ({ user }) => {
 
     return (
         <div className="cart-container">
-            <Header user={user}/>
+            {/* <Header user={user}/> */}
             <h1 className="cart-head-title">Cart</h1>
             <div className="cart">
             

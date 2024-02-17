@@ -52,38 +52,12 @@ export const Home = ({ loginuser }) => {
 
     fetchpProducts();
   }, []);
-  // const sortedProducts = [...products].sort((a, b) => b.sold - a.sold);
-  //   setBestSellingProducts(sortedProducts);
-  // const [user, setUser] = useState(null);
-
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const response = await axios.get('http://localhost:5000/api/userData');
-  //       setUser(response.data.user);
-  //     } catch (error) {
-  //       console.error('Error fetching user data:', error);
-  //     }
-  //   };
-
-  //   fetchUserData();
-  // }, []);
-  
 
   return (
     <div>
-
-      <Header user={loginuser}/>
       <Slider />
       <Brands />
-      {/* <ShopCategories /> */}
-      {/* best deals - based on discount
-          popular - based on likes
-          best selling - based on sold */}
       <HomeBestDeals products={products} user={loginuser}/>
-      {/* <BrandSection /> */}
-      {/* <PopularProducts /> */}
-      {/* <HomeCategorySection products={products} /> */}
       <BestSellingProducts products={bestSellingProducts} user={loginuser} />
       <Footer />
     </div>

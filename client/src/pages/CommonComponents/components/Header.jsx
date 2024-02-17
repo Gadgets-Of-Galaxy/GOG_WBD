@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "../styles/Header.css";
-import { useLocation, Link } from "react-router-dom";
-import {Search} from './Search'
-import axios from 'axios';
+import { useLocation, Link, useNavigate } from "react-router-dom";
+import { Search } from "./Search";
+import axios from "axios";
 
 import {
   faXmark,
@@ -21,7 +21,6 @@ import {
   faMale,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 
 export const Header = ({ user, onFilteredProducts }) => {
   const categories = [
@@ -90,10 +89,11 @@ export const Header = ({ user, onFilteredProducts }) => {
   ];
 
   const location = useLocation();
+  const navigate = useNavigate();
   const isHomePage = location.pathname === "/";
 
   const [isMenuOpen, setIsMenuOpen] = useState(isHomePage);
-  
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -104,7 +104,6 @@ export const Header = ({ user, onFilteredProducts }) => {
     }
   }, [location.pathname]);
 
-  
   const handleSearch = async (query) => {
     try {
       const response = await axios.get("http://localhost:5000/api/products");
@@ -112,10 +111,11 @@ export const Header = ({ user, onFilteredProducts }) => {
       const filteredProducts = allProducts.filter((product) =>
         product.title.toLowerCase().includes(query.toLowerCase())
       );
-      console.log('Search results:', filteredProducts);
+      // console.log(filteredProducts);
       onFilteredProducts(filteredProducts);
+      navigate("/category", { state: { sortedProducts: filteredProducts } });
     } catch (error) {
-      console.error('Error fetching products:', error);
+      console.error("Error fetching products:", error);
     }
   };
 
@@ -133,7 +133,7 @@ export const Header = ({ user, onFilteredProducts }) => {
               </li>
               <li>Shop</li>
               <li>Gadgets</li>
-              <li>{ !user && <Link to="/login">Login</Link> }</li>
+              <li>{!user && <Link to="/login">Login</Link>}</li>
               {/* <li>
                 <Link to="/seller">Seller</Link>
               </li>
@@ -144,14 +144,18 @@ export const Header = ({ user, onFilteredProducts }) => {
           </div>
         </div>
         <div className="header-right">
-          { user && (<Link to="/myAccount">
-            <p>My Account</p>
-          </Link>) }
-          <Link to="/wishlist"><FontAwesomeIcon className="header-right-icon" icon={ faHeart } /></Link>
+          {user && (
+            <Link to="/myAccount">
+              <p>My Account</p>
+            </Link>
+          )}
+          <Link to="/wishlist">
+            <FontAwesomeIcon className="header-right-icon" icon={faHeart} />
+          </Link>
           <Link to="/cart">
             <FontAwesomeIcon
               className="header-right-icon"
-              icon={ faCartShopping }
+              icon={faCartShopping}
             />
           </Link>
         </div>
@@ -163,55 +167,57 @@ export const Header = ({ user, onFilteredProducts }) => {
               <div className="dpt-head">
                 <div className="dpt-head-top">
                   <div className="main-text">All Departments</div>
-                  <div className="mini-text mobile-hide">Total 1234 Products</div>
+                  <div className="mini-text mobile-hide">
+                    Total 1234 Products
+                  </div>
                 </div>
                 <a
                   href="#"
                   className="dpt-trigger mobile-hide"
-                  onClick={ toggleMenu }
+                  onClick={toggleMenu}
                 >
-                  { !isMenuOpen && (
-                    <FontAwesomeIcon className="header-bars" icon={ faBars } />
-                  ) }
-                  { isMenuOpen && (
-                    <FontAwesomeIcon className="header-bars" icon={ faXmark } />
-                  ) }
+                  {!isMenuOpen && (
+                    <FontAwesomeIcon className="header-bars" icon={faBars} />
+                  )}
+                  {isMenuOpen && (
+                    <FontAwesomeIcon className="header-bars" icon={faXmark} />
+                  )}
                 </a>
               </div>
 
               <div className="categories">
-                { isMenuOpen &&
+                {isMenuOpen &&
                   categories.map((category, index) => (
-                    <div key={ index } className="category has-child">
+                    <div key={index} className="category has-child">
                       <a href="#">
                         <div className="category-list">
                           <div className="category-left">
                             <FontAwesomeIcon
                               className="category-icon"
-                              icon={ category.icon }
+                              icon={category.icon}
                             />
-                            { category.category }
+                            {category.category}
                           </div>
                           <div className="category-right">
-                            <FontAwesomeIcon icon={ faAngleRight } />
+                            <FontAwesomeIcon icon={faAngleRight} />
                           </div>
                         </div>
                       </a>
                       <ul>
-                        { category.types.map((type, typeIndex) => (
-                          <li key={ typeIndex }>
-                            <a href={ `/${type.toLowerCase()}` }>{ type }</a>
+                        {category.types.map((type, typeIndex) => (
+                          <li key={typeIndex}>
+                            <a href={`/${type.toLowerCase()}`}>{type}</a>
                           </li>
-                        )) }
+                        ))}
                       </ul>
                     </div>
-                  )) }
+                  ))}
               </div>
             </div>
           </div>
-          <Search handleSearch={handleSearch}/>
+          <Search handleSearch={handleSearch} />
         </div>
       </div>
-    </div >
+    </div>
   );
 };

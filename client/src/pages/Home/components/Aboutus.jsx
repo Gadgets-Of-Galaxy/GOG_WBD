@@ -8,7 +8,7 @@ export const Aboutus = ({user}) => {
     return (
         <>
             <div style={ { width: '100%', zIndex: '9999', top: '0' } }>
-                <Header user={user} />
+                {/* <Header user={user} /> */}
             </div>
             <div className='aboutus'>
 

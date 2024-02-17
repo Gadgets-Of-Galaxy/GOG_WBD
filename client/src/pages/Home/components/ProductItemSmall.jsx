@@ -8,23 +8,19 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 
 export const ProductItemSmall = (props) => {
+    
     const user = props.user ? props.user : null;
     const productId = props.product._id;
     const imagePath = props.product.imagePath;
     const price = props.product.price;
     const productcode = props.product.productcode
     const title = props.product.title
-    // console.log(props.product._id);
     const [showWishlistOptions, setShowWishlistOptions] = useState(false);
     const [wishlistName, setWishlistName] = useState('');
     const [createNewWishlist, setCreateNewWishlist] = useState(true);
     const [userWishlists, setUserWishlists] = useState([]);
     const [useExistingWishlist, setUseExistingWishlist] = useState(false);
     const [selectedWishlist, setSelectedWishlist] = useState('');
-
-    useEffect(() => {
-        fetchUserWishlists();
-    }, []);
 
     const fetchUserWishlists = async () => {
         try {
@@ -40,6 +36,11 @@ export const ProductItemSmall = (props) => {
             console.error('Error while fetching user wishlists:', error);
         }
     };
+    useEffect(() => {
+        if (user !== null) {
+            fetchUserWishlists();
+        }
+    }, []);
 
     const handleWishlistClick = () => {
         fetchUserWishlists();

@@ -12,24 +12,30 @@ import { Products } from './pages/Admin/components/Products';
 import { Users } from './pages/Admin/components/Users';
 import { OrdersList } from './pages/Admin/components/OrdersList';
 import { Category } from './pages/Home/components/Category';
-import {EditProfile } from './pages/Home/components/EditProfile';
+import { EditProfile } from './pages/Home/components/EditProfile';
 import { MyWishlists } from './pages/Home/components/MyWishlists';
-import {MyCart} from './pages/Home/components/MyCart';
-import {MyOrders} from './pages/Home/components/MyOrders';
-import {CheckoutPage} from './pages/Home/components/CheckoutPage';
-import {Aboutus} from './pages/Home/components/Aboutus';
-import {Contactus} from './pages/Home/components/Contactus';
+import { MyCart } from './pages/Home/components/MyCart';
+import { MyOrders } from './pages/Home/components/MyOrders';
+import { CheckoutPage } from './pages/Home/components/CheckoutPage';
+import { Aboutus } from './pages/Home/components/Aboutus';
+import { Contactus } from './pages/Home/components/Contactus';
 import { Login } from './pages/Login_SignUp/components/Login';
+import { SellerLogin } from './pages/Login_SignUp/components/SellerLogin';
 import ProductDetailsPage from './pages/Home/components/ProductDetailsPage';
 
 import { SellerDashboard } from './pages/Seller/components/SellerDashboard';
+import { SellerAddProduct } from './pages/Seller/components/SellerAddProduct';
+import { Header } from './pages/CommonComponents/components/Header';
 
 import axios from "axios";
+import { SellersList } from './pages/Admin/components/SellersList';
+import SellerRegister from './pages/Login_SignUp/components/SellerRegister';
 
 function App() {
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState(null);
   const [users, setUsers] = useState(null);
+  const [sellers, setSellers] = useState(null);
   const [categories, setCategories] = useState(null);
   const [orders, setOrders] = useState(null);
   const [messages, setMessages] = useState(null);
@@ -86,7 +92,7 @@ function App() {
     };
     fetchProducts();
   }, []);
-  
+
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -124,78 +130,86 @@ function App() {
   }, []);
 
   useEffect(() => {
+    const fetchSellers = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/sellers/');
+        setSellers(response.data.sellers);
+      } catch (error) {
+        console.error('Error fetching Sellers:', error);
+      }
+    };
+    fetchSellers();
+  }, []);
+
+  useEffect(() => {
     const token = localStorage.getItem('token');
 
     if (token) {
-        axios.defaults.headers.common['Authorization'] = token;
+      axios.defaults.headers.common['Authorization'] = token;
     }
-}, []);
+  }, []);
 
-useEffect(() => {
-  const fetchUser = async () => {
-    try {
-      if (loginuser) {
-        const response = await axios.get(`http://localhost:5000/api/users/${loginuser._id}`);
-        setLoginUser(response.data);
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        if (loginuser) {
+          const response = await axios.get(`http://localhost:5000/api/users/${loginuser._id}`);
+          setLoginUser(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
       }
-    } catch (error) {
-      console.error('Error fetching user:', error);
-    }
-  };
+    };
 
-  fetchUser();
-}, []);
+    fetchUser();
+  }, []);
+
+  const [sortedProducts, setSortedProducts] = useState([]);
+
+  const handleSearchedProducts = (searchedData) => {
+    setSortedProducts(searchedData);
+  };
 
 
   return (
     <Router>
-    <div>
-      <Routes>
-        <Route path="/" element={<Home loginuser={user}/>} />
-        <Route path="/login" element={<Login setLoginUser={setLoginUser} />} />
-        <Route path="/product/:productId" element={<ProductDetailsPage user={loginuser} />} />
-        <Route
+      <div>
+      <Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } />
+        <Routes>
+          {/* <Route
+            path={ ["/", "/login", "/product/:productId", "/cart", "/myOrders", "/category"] }
+            element={ <Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } /> }
+          /> */}
+          <Route path="/" element={ <Home loginuser={ user } /> } />
+          <Route path="/login" element={ <Login setLoginUser={ setLoginUser } /> } />
+          <Route path="/product/:productId" element={ <ProductDetailsPage user={ loginuser } /> } />
+          <Route
             path="/myAccount"
-            element={loginuser ? <MyAccount user={loginuser} /> : <Navigate to="/login" />}
+            element={ loginuser ? <MyAccount user={ loginuser } /> : <Navigate to="/login" /> }
           />
-        <Route path="/editProfile" element={<EditProfile user={loginuser}/>} />
-        <Route path='/wishlist' element={loginuser ? <MyWishlists user={loginuser}/> : <Navigate to="/login" />} />
-        <Route path='/cart' element={loginuser ? <MyCart user={loginuser}/> : <Navigate to="/login" />} />
-        <Route path='/myOrders' element={loginuser ? <MyOrders user={loginuser}/> : <Navigate to="/login" />} />
-        <Route path="/category" element={<Category categories={categories} user={loginuser} products={products}/>} />
-        <Route path='/checkout' element={loginuser ? <CheckoutPage user={loginuser}/> : <Navigate to="/login" />}/>
-        <Route path='/Aboutus' element={<Aboutus user={loginuser}/>} />
-        <Route path='/Contactus' element={<Contactus user={loginuser}/>} />
+          <Route path="/editProfile" element={ <EditProfile user={ loginuser } /> } />
+          <Route path='/wishlist' element={ loginuser ? <MyWishlists user={ loginuser } /> : <Navigate to="/login" /> } />
+          <Route path='/cart' element={ loginuser ? <MyCart user={ loginuser } /> : <Navigate to="/login" /> } />
+          <Route path='/myOrders' element={ loginuser ? <MyOrders user={ loginuser } /> : <Navigate to="/login" /> } />
+          <Route path="/category" element={ <Category categories={ categories } user={ loginuser } products={ products } sortedProducts={ sortedProducts } /> } />
+          <Route path='/checkout' element={ loginuser ? <CheckoutPage user={ loginuser } /> : <Navigate to="/login" /> } />
+          <Route path='/Aboutus' element={ <Aboutus user={ loginuser } /> } />
+          <Route path='/Contactus' element={ <Contactus user={ loginuser } /> } />
 
-        <Route path='/admin' element={<AdminDashboard />} />
-        <Route path='/admin/productDetails' element={<Products products={products} />}/>
-        <Route path='/admin/userDetails' element={<Users users={users} />} />
-        <Route path='/admin/ordersList' element={<OrdersList orders={orders} />} />
-        <Route path='/admin/addProduct' element={<AddProduct />} />
-        <Route path='/admin/messages' element={<AdminMessages messages={messages} />} />
+          <Route path='/admin' element={ <AdminDashboard /> } />
+          <Route path='/admin/productDetails' element={ <Products products={ products } /> } />
+          <Route path='/admin/userDetails' element={ <Users users={ users } /> } />
+          <Route path='/admin/sellerDetails' element={ <SellersList users={ users } /> } />
+          <Route path='/admin/ordersList' element={ <OrdersList orders={ orders } /> } />
+          <Route path='/admin/addProduct' element={ <AddProduct /> } />
+          <Route path='/admin/messages' element={ <AdminMessages messages={ messages } /> } />
+          <Route path='/admin/sellersList' element={ <SellersList sellers={ sellers } /> } />
 
-        {/* {isAdmin && (
-            <Route path="/admin" element={<AdminDashboard />} />
-          )}
-          {isAdmin && (
-            <Route path="/admin/productDetails" element={<Products products={productsData} />} />
-          )}
-          {isAdmin && (
-            <Route path="/admin/userDetails" element={<Users users={users} />} />
-          )}
-          {isAdmin && (
-            <Route path="/admin/ordersList" element={<OrdersList orders={orders} />} />
-          )}
-          {isAdmin && (
-            <Route path="/admin/addProduct" element={<AddProduct />} />
-          )}
-          {isAdmin && (
-            <Route path="/admin/messages" element={<AdminMessages messages={messages} />} />
-          )} */}
-
-
-        <Route path='/seller' element={<SellerDashboard />} />
-      </Routes>
+          <Route path="/sellerLogin" element={ <SellerLogin /> } />
+          <Route path="/sellerRegister" element={ <SellerRegister /> } />
+          <Route path='/seller' element={ <SellerDashboard /> } />
+          <Route path='/seller/addproduct' element={ <SellerAddProduct /> } />
+        </Routes>
       </div>
     </Router>
   )

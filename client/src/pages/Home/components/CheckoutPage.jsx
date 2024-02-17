@@ -94,7 +94,7 @@ export const CheckoutPage = ({ user }) => {
 
   return (
     <>
-      <Header user={ user } />
+      {/* <Header user={ user } /> */}
       <div className="checkout-container fade-in">
         <div className="checkout-summary">
           <h2>Order Summary</h2>

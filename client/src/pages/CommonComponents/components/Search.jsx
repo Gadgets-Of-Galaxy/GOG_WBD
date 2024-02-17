@@ -11,6 +11,7 @@ export const Search = ({ handleSearch }) => {
 
     const searchProducts = () => {
         handleSearch(searchQuery);
+        setSearchQuery('');
     };
 
     return (

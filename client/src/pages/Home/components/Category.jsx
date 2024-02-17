@@ -4,7 +4,7 @@ import { Footer } from '../../CommonComponents/components/Footer';
 import '../styles/Category.css';
 import { Link } from 'react-router-dom';
 
-export const Category = ({ categories, products, user }) => {
+export const Category = ({ categories, products, user, sortedProducts }) => {
   // console.log("Categories", categories);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [selectedBrands, setSelectedBrands] = useState([]);
@@ -17,17 +17,15 @@ export const Category = ({ categories, products, user }) => {
     : [];
 
 
-const allBrands = products.map(product => product.brand);
-const uniqueBrandsSet = new Set(allBrands);
-const brands = Array.from(uniqueBrandsSet);
-console.log(brands);
+  const allBrands = products.map(product => product.brand);
+  const uniqueBrandsSet = new Set(allBrands);
+  const brands = Array.from(uniqueBrandsSet);
 
   const priceRanges = ['0-100', '100-500', '500-1000'];
 
   const [selectedPriceRange, setSelectedPriceRange] = useState('');
   const [sortBy, setSortBy] = useState('');
   const [productsToShow, setProductsToShow] = useState(12);
-  const [sortedProducts, setSortedProducts] = useState(products);
 
   const filteringOptions = [
     ...brands.map((brand, index) => ({ id: `brand${index + 1}`, label: brand })),
@@ -92,16 +90,15 @@ console.log(brands);
     );
   };
 
-  const [searchedProducts, setSearchedProducts] = useState(products);
+  const [searchedProducts, setSearchedProducts] = useState();
 
   const handleFilteredProducts = (filteredData) => {
-    setSearchedProducts(filteredData);
+    setSortedProducts(filteredData);
   };
-  console.log(searchedProducts);
 
   return (
     <>
-      <Header user={ user } onFilteredProducts={ handleFilteredProducts } />
+      {/* <Header user={ user } onFilteredProducts={ handleFilteredProducts } /> */}
       <div id="page" className="site page-category">
         <div className="content-container">
           <div className="filters">
@@ -182,18 +179,34 @@ console.log(brands);
         </div>
         <div className="products">
           <div className="products main flexwrap">
-            { searchedProducts && searchedProducts.length > 0 && searchedProducts.slice(0, productsToShow).map((product) => (
-              <div className="item" key={ product._id }>
-                <img src={ product.imagePath } alt={ product.name } />
-                <Link to={ `/product/${product._id.$oid}` } className="product-link">
-                  <h3 className="product-title">{ product.title }</h3>
-                </Link>
-                <p>
-                  <strong style={ { textDecoration: 'line-through' } }>MRP: Rs.{ product.mrp }</strong>
-                </p>
-                <p>Price: Rs.{ product.price }</p>
-              </div>
-            )) }
+            { !sortedProducts || sortedProducts.length === 0 ? (
+              products.slice(0, productsToShow).map((product) => (
+                <div className="item" key={ product._id }>
+                  <img src={ product.imagePath } alt={ product.name } />
+                  <Link to={ `/product/${product._id}` } className="product-link">
+                    <h3 className="product-title">{ product.title }</h3>
+                  </Link>
+                  <p>
+                    <strong style={ { textDecoration: 'line-through' } }>MRP: Rs.{ product.mrp }</strong>
+                  </p>
+                  <p>Price: Rs.{ product.price }</p>
+                </div>
+              ))
+            ) : (
+              sortedProducts.slice(0, productsToShow).map((product) => (
+                <div className="item" key={ product._id }>
+                  <img src={ product.imagePath } alt={ product.name } />
+                  <Link to={ `/product/${product._id}` } className="product-link">
+                    <h3 className="product-title">{ product.title }</h3>
+                  </Link>
+                  <p>
+                    <strong style={ { textDecoration: 'line-through' } }>MRP: Rs.{ product.mrp }</strong>
+                  </p>
+                  <p>Price: Rs.{ product.price }</p>
+                </div>
+              ))
+            ) }
+
 
           </div>
         </div>

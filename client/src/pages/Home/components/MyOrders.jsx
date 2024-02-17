@@ -24,7 +24,7 @@ export const MyOrders = ({ user }) => {
   }, [user]);
   return (
     <>
-      <Header user={user} />
+      {/* <Header user={user} /> */}
       <div className="myAccount">
         <h1 className="cart-head-title">My Orders</h1>
         <div className="cart">
