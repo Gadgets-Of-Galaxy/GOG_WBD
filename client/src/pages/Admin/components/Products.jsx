@@ -52,7 +52,7 @@ export const Products = () => {
                             <tr>
                                 <th><b>Product Image</b></th>
                                 <th><b>Product Code</b></th>
-                                <th><b>Product Name</b></th>
+                                {/* <th><b>Product Name</b></th> */}
                                 <th><b>Brand</b></th>
                                 <th><b>Sold</b></th>
                                 <th><b>Available</b></th>
@@ -68,7 +68,7 @@ export const Products = () => {
                                         <img src={ `/${product.imagePath}` } alt="Product" className="product-image" />
                                     </td>
                                     <td>{ product.productCode }</td>
-                                    <td>{ product.title }</td>
+                                    {/* <td>{ product.title }</td> */}
                                     <td>{ product.brand }</td>
                                     <td>{ product.sold }</td>
                                     <td>{ product.stock }</td>
@@ -86,7 +86,7 @@ export const Products = () => {
                                         <img src={ `/${product.imagePath}` } alt="Product" className="product-image" />
                                     </td>
                                     <td>{ product.productCode }</td>
-                                    <td>{ product.title }</td>
+                                    {/* <td>{ product.title }</td> */}
                                     <td>{ product.brand }</td>
                                     <td>{ product.sold }</td>
                                     <td>{ product.stock }</td>

@@ -1,37 +1,38 @@
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.form {
-    width: 300px;
-    padding: 20px;
-    background-color: #f2f2f2;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.form h2 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.form input[type="text"],
-.form input[type="email"],
-.form input[type="password"] {
+.container1 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 400px;
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
+    padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
 
-.form input[type="submit"] {
+.container1 h2 {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.container1 form label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 1.2em;
+    font-weight: 500;
+}
+
+.container1 form input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.container1 form button {
     width: 100%;
     padding: 10px;
-    margin-top: 10px;
     background-color: #007bff;
     color: #fff;
     border: none;
@@ -39,6 +40,20 @@
     cursor: pointer;
 }
 
-.form input[type="submit"]:hover {
+.container1 form button:hover {
     background-color: #0056b3;
+}
+
+.container1 p {
+    margin-top: 5px;
+    text-align: center;
+}
+
+.container1 p a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.container1 p a:hover {
+    text-decoration: underline;
 }

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import "../styles/Seller.css";
+import '../styles/Seller.css';
 
 export const SellerRegister = () => {
     const [formData, setFormData] = useState({
@@ -34,10 +34,10 @@ export const SellerRegister = () => {
     };
 
     return (
-        <div className='container'>
+        <div className='container1'>
             <h2>Register as a Seller</h2>
             <form onSubmit={handleSubmit}>
-            <label>Username:
+                <label>Username:
                     <input type="text" name="username" value={formData.username} onChange={handleChange} required />
                 </label><br />
                 <label>Email:
@@ -54,6 +54,7 @@ export const SellerRegister = () => {
                 </label><br />
                 <button type="submit">Register</button>
             </form>
+            <p>Already registered? <Link to="/sellerLogin">Login</Link></p>
         </div>
     );
 }

@@ -1,24 +1,9 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
-export const WishlistComponent = () => {
-    const storedUser = JSON.parse(localStorage.getItem('loggedInUser'));
-    const [user, setUser] = useState(storedUser || null);
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await axios.get('http://localhost:5000/api/users/' + user._id);
-                setUser(response.data);
-            } catch (error) {
-                console.error('Error fetching user:', error);
-            }
-        };
-        if (user) {
-            fetchUser();
-        }
-    }, [user]);
-
+export const WishlistComponent = ({ user }) => {
+    const navigate = useNavigate();
     const [wishlists, setWishlists] = useState([]);
 
     useEffect(() => {
@@ -64,7 +49,6 @@ export const WishlistComponent = () => {
                     return updatedWishlists;
                 });
                 window.alert("Product removed from wishlist successfully!");
-                window.location.reload();
             }
         } catch (error) {
             console.error('Error removing product from wishlist:', error);

@@ -4,7 +4,7 @@ import { Header } from '../../CommonComponents/components/Header'
 import { Footer } from '../../CommonComponents/components/Footer'
 
 
-export const Aboutus = () => {
+export const Aboutus = ({user}) => {
     return (
         <>
             <div style={ { width: '100%', zIndex: '9999', top: '0' } }>

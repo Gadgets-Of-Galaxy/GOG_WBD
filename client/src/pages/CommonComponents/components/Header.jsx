@@ -22,24 +22,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export const Header = ({ onFilteredProducts }) => {
-  const storedUser = JSON.parse(localStorage.getItem('loggedInUser'));
-    const [user, setUser] = useState(storedUser || null);
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await axios.get('http://localhost:5000/api/users/' + user._id);
-                setUser(response.data);
-            } catch (error) {
-                console.error('Error fetching user:', error);
-            }
-        };
-        if (user) {
-            fetchUser();
-        }
-    }, [user]);
-    
+export const Header = ({ user, onFilteredProducts }) => {
   const categories = [
     {
       category: "Mobiles",
@@ -150,7 +133,8 @@ export const Header = ({ onFilteredProducts }) => {
               </li>
               <li>
                 <Link to="/">Shop</Link>
-              </li><li>
+              </li>
+              <li>
                 <Link to="/">Gadgets</Link>
               </li>
               <li>{!user && <Link to="/login">Login</Link>}</li>

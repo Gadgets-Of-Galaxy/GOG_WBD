@@ -26,7 +26,7 @@ export const SellerSidebar = ({ activeLink, toggleSidebar, achieve }) => {
                     </a>
                 </li>
                 <li>
-                    <a href="/seller" className={activeLink === "productslist" ? "active" : ""}>
+                    <a href="/seller/products" className={activeLink === "productslist" ? "active" : ""}>
                         {/* <FontAwesomeIcon className="header-right-icon" icon={ faXmark } /> */}
                         <span className="links_name">Products</span>
                     </a>
@@ -38,15 +38,15 @@ export const SellerSidebar = ({ activeLink, toggleSidebar, achieve }) => {
                     </a>
                 </li>
                 <li>
-                    <a href="/seller" className={activeLink === "userslist" ? "active" : ""}>
-                        {/* <FontAwesomeIcon className="header-right-icon" icon={ faXmark } /> */}
-                        <span className="links_name">Users List</span>
-                    </a>
-                </li>
-                <li>
                     <a href="/seller/ordersList" className={activeLink === "orderslist" ? "active" : ""}>
                         {/* <FontAwesomeIcon className="header-right-icon" icon={ faXmark } /> */}
                         <span className="links_name">Orders List</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="/seller/reviews" className={activeLink === "reviews" ? "active" : ""}>
+                        {/* <FontAwesomeIcon className="header-right-icon" icon={ faXmark } /> */}
+                        <span className="links_name">Reviews</span>
                     </a>
                 </li>
                 <li className="log_out">

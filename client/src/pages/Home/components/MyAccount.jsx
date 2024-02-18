@@ -21,11 +21,10 @@ export const MyAccount = () => {
             fetchUser();
         }
     }, [user]);
-
     return (
         <div className="myAccount">
             <UserNavLinks activeLink="MyProfile" />
-            <UserProfile user={ user } />
+            <UserProfile user={user}/>
         </div>
     );
 }

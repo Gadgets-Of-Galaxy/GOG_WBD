@@ -29,18 +29,19 @@ import { Header } from './pages/CommonComponents/components/Header';
 import axios from "axios";
 import { SellersList } from './pages/Admin/components/SellersList';
 import SellerRegister from './pages/Login_SignUp/components/SellerRegister';
+import { SellerProducts } from './pages/Seller/components/SellerProducts';
 
 function App() {
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState(null);
-  const [categories, setCategories] = useState(null);
   const [users, setUsers] = useState(null);
   const [sellers, setSellers] = useState(null);
+  const [categories, setCategories] = useState(null);
   const [orders, setOrders] = useState(null);
   const [messages, setMessages] = useState(null);
   const storedUser = JSON.parse(localStorage.getItem('loggedInUser'));
   const [loginuser, setLoginUser] = useState(storedUser || null);
-
+  
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('loggedInUser'));
     if (storedUser) {
@@ -53,6 +54,7 @@ function App() {
       try {
         const response = await axios.get('http://localhost:5000/api/users/' + loginuser._id);
         setUser(response.data);
+        // console.log(user);
       } catch (error) {
         console.error('Error fetching user:', error);
       }
@@ -62,7 +64,6 @@ function App() {
       fetchUser();
     }
   }, [loginuser]);
-
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -144,43 +145,58 @@ function App() {
     }
   }, []);
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        if (loginuser) {
+          const response = await axios.get(`http://localhost:5000/api/users/${loginuser._id}`);
+          setLoginUser(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   const [sortedProducts, setSortedProducts] = useState([]);
+
   const handleSearchedProducts = (searchedData) => {
     setSortedProducts(searchedData);
   };
+
 
   return (
     <Router>
       <div>
         <Routes>
-          <Route path="/" element={ <><Header onFilteredProducts={ handleSearchedProducts } /><Home/></> } />
+          <Route path="/" element={ <><Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } /><Home loginuser={ user } /></> } />
           <Route path="/login" element={ <Login setLoginUser={ setLoginUser } /> } />
-          <Route path="/product/:productId" element={ <><Header onFilteredProducts={ handleSearchedProducts } /><ProductDetailsPage/></> } />
-          <Route
-            path="/myAccount"
-            element={ loginuser?.isUser? <MyAccount /> : <Navigate to="/login" /> }
-          />
-          <Route path="/editProfile" element={ loginuser?.isUser? <EditProfile/> : <Navigate to="/login" /> } />
-          <Route path='/wishlist' element={ loginuser?.isUser? <MyWishlists/> : <Navigate to="/login" /> } />
-          <Route path='/cart' element={ loginuser?.isUser? <><Header onFilteredProducts={ handleSearchedProducts } /><MyCart/></> : <Navigate to="/login" /> } />
-          <Route path='/myOrders' element={ loginuser?.isUser? <><Header onFilteredProducts={ handleSearchedProducts } /><MyOrders/></> : <Navigate to="/login" /> } />
-          <Route path="/category" element={ loginuser?.isUser? <><Header onFilteredProducts={ handleSearchedProducts } /><Category sortedProducts={ sortedProducts } /></> : <Navigate to="/login" /> } />
-          <Route path='/checkout' element={ loginuser?.isUser? <CheckoutPage user={ loginuser } /> : <Navigate to="/login" /> } />
-          <Route path='/Aboutus' element={ <Aboutus /> } />
-          <Route path='/Contactus' element={ <Contactus /> } />
+          <Route path="/product/:productId" element={ <><Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } /><ProductDetailsPage user={ loginuser } /></> } />
+          <Route path="/category" element={ <><Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } /><Category categories={ categories } user={ loginuser } products={ products } sortedProducts={ sortedProducts } /></> } />
+          <Route path='/Aboutus' element={ <Aboutus user={ loginuser } /> } />
+          <Route path='/Contactus' element={ <Contactus user={ loginuser } /> } />
+          <Route path="/myAccount" element={ loginuser?.isUser? <MyAccount /> : <Navigate to="/login" /> } />
+
+          <Route path="/editProfile" element={ loginuser?.isUser? <EditProfile user={ loginuser } /> : <Navigate to="/login" /> } />
+          <Route path='/wishlist' element={ loginuser?.isUser?  <MyWishlists user={ loginuser } /> : <Navigate to="/login" /> } />
+          <Route path='/cart' element={ loginuser?.isUser?  <><Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } /><MyCart user={ loginuser } /></> : <Navigate to="/login" /> } />
+          <Route path='/myOrders' element={ loginuser?.isUser?  <><Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } /><MyOrders user={ loginuser } /></> : <Navigate to="/login" /> } />
+          <Route path='/checkout' element={ loginuser?.isUser?  <CheckoutPage user={ loginuser } /> : <Navigate to="/login" /> } />
 
           <Route path='/admin' element={ loginuser?.isAdmin ? <AdminDashboard /> : <Navigate to="/login" /> } />
-          <Route path='/admin/productDetails' element={ loginuser?.isAdmin ? <Products /> : <Navigate to="/login" /> } />
-          <Route path='/admin/userDetails' element={ loginuser?.isAdmin ? <Users /> : <Navigate to="/login" /> } />
-          <Route path='/admin/ordersList' element={ loginuser?.isAdmin ? <OrdersList /> : <Navigate to="/login" /> } />
-          <Route path='/admin/messages' element={ loginuser?.isAdmin ? <AdminMessages /> : <Navigate to="/login" /> } />
-          <Route path='/admin/sellersList' element={ loginuser?.isAdmin ? <SellersList /> : <Navigate to="/login" /> } />
-
+          <Route path='/admin/productDetails' element={ loginuser?.isAdmin ? <Products products={ products } /> : <Navigate to="/login" /> } />
+          <Route path='/admin/userDetails' element={ loginuser?.isAdmin ? <Users users={ users }/> : <Navigate to="/login" /> } />
+          <Route path='/admin/ordersList' element={ loginuser?.isAdmin ? <OrdersList orders={ orders } /> : <Navigate to="/login" /> } />
+          <Route path='/admin/messages' element={ loginuser?.isAdmin ? <AdminMessages messages={ messages } /> : <Navigate to="/login" /> } />
+          <Route path='/admin/sellersList' element={ loginuser?.isAdmin ? <SellersList sellers={ sellers } /> : <Navigate to="/login" /> } />
 
           <Route path="/sellerLogin" element={ <SellerLogin /> } />
           <Route path="/sellerRegister" element={ <SellerRegister /> } />
           <Route path='/seller' element={ <SellerDashboard /> } />
           <Route path='/seller/addproduct' element={ <SellerAddProduct /> } />
+          <Route path="/seller/products" element={ <SellerProducts/> } />
         </Routes>
       </div>
     </Router>

@@ -1,6 +1,5 @@
 import "../styles/seller.css";
 import { useState, useEffect } from "react";
-import {useNavigate} from "react-router-dom";;
 import axios from "axios";
 import { SellerSidebar } from "./SellerSidebar";
 import { AddProductPopUp } from "./AddProductPopUp";
@@ -9,7 +8,6 @@ import { faImage } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const SellerAddProduct = () => {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     productCode: "",
     title: "",
@@ -57,7 +55,7 @@ export const SellerAddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // console.log("form data to send: ", formData);
+    console.log("form data to send: ", formData);
 
     try {
       const response = await axios.post(
@@ -94,7 +92,6 @@ export const SellerAddProduct = () => {
           available: true,
           category: "",
         });
-        navigate('/seller');
       } else {
         console.error("Image upload failed.");
       }
@@ -168,9 +165,10 @@ export const SellerAddProduct = () => {
     <>
     <div>
     
-      <SellerSidebar activeLink="sellerDashboard" />
+      <SellerSidebar activeLink="addproduct" />
       
       <section className="home-section">
+      <button onClick={openPopup}>Test</button>
         <div className="seller-content">
           <div className="seller-selection">
             <h3>Products</h3>

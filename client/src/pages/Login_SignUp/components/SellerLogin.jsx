@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import "../styles/Seller.css";
+import '../styles/Seller.css';
 
 export const SellerLogin = () => {
     const [formData, setFormData] = useState({
@@ -31,10 +31,10 @@ export const SellerLogin = () => {
     };
 
     return (
-        <div>
+        <div className="container1">
             <h2>Login</h2>
             <form onSubmit={handleSubmit}>
-            <label>Email:
+                <label>Email:
                     <input type="email" name="email" value={formData.email} onChange={handleChange} required />
                 </label><br />
                 <label>Password:
@@ -42,6 +42,7 @@ export const SellerLogin = () => {
                 </label><br />
                 <button type="submit">Login</button>
             </form>
+            <p>Don't have an account? <Link to="/SellerRegister">Register</Link></p>
         </div>
     );
 }

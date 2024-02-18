@@ -20,12 +20,6 @@ export const AdminSidebar = ({ activeLink }) => {
                     </a>
                 </li>
                 <li>
-                    <a href="/admin/productSales" className={activeLink === "productSales" ? "active" : ""}>
-                        <i className='bx bx-box'></i>
-                        <span className="links_name">Product Sales</span>
-                    </a>
-                </li>
-                <li>
                     <a href="/admin/productDetails" className={activeLink === "productslist" ? "active" : ""}>
                         <i className='bx bx-box'></i>
                         <span className="links_name">Products</span>

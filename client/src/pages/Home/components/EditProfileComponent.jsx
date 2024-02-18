@@ -2,24 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 
-export const EditProfileComponent = () => {
-    const storedUser = JSON.parse(localStorage.getItem('loggedInUser'));
-    const [user, setUser] = useState(storedUser || null);
-
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await axios.get('http://localhost:5000/api/users/' + user._id);
-                setUser(response.data);
-            } catch (error) {
-                console.error('Error fetching user:', error);
-            }
-        };
-        if (user) {
-            fetchUser();
-        }
-    }, [user]);
-
+export const EditProfileComponent = ({ user }) => {
     const navigate = useNavigate();
     const [userInput, setUserInput] = useState({
         mobileNumber: user.mobileNumber,
@@ -35,7 +18,7 @@ export const EditProfileComponent = () => {
             dob: user.dob || '',
             location: user.location || '',
         });
-    }, [user.mobileNumber, user.gender, user.dob, user.location]);
+    }, [user]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -50,6 +33,7 @@ export const EditProfileComponent = () => {
 
         try {
             const response = await axios.post(`http://localhost:5000/api/editprofile/${user._id}`, userInput);
+            console.log(response.data);
             navigate('/myAccount');
         } catch (error) {
             console.error("Error updating profile:", error);
@@ -68,6 +52,7 @@ export const EditProfileComponent = () => {
                         <i className='bx bx-search'></i>
                     </div>
                 </nav>
+
                 <div className="uprofilepage">
                     <h3 className="font-weight-bold">EDIT PROFILE</h3>
                     <hr />
