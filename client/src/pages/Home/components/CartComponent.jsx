@@ -3,7 +3,24 @@ import axios from "axios";
 import { Header } from "../../CommonComponents/components/Header";
 import { useNavigate } from "react-router-dom";
 
-export const CartComponent = ({ user }) => {
+export const CartComponent = () => {
+    const storedUser = JSON.parse(localStorage.getItem('loggedInUser'));
+    const [user, setUser] = useState(storedUser || null);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/api/users/' + user._id);
+                setUser(response.data);
+            } catch (error) {
+                console.error('Error fetching user:', error);
+            }
+        };
+        if (user) {
+            fetchUser();
+        }
+    }, [user]);
+
     const [cartItems, setCartItems] = useState([]);
     const [subtotal, setSubtotal] = useState(0);
     const [totalQuantity, setTotalQuantity] = useState(0);

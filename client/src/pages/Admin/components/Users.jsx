@@ -1,21 +1,35 @@
-import "../styles/adminLists.css"
-// import { AdminOverview } from "./AdminOverview";
+import React, { useState, useEffect } from 'react';
+import "../styles/adminLists.css";
 import { AdminSidebar } from "./AdminSidebar";
 
-export const Users = ({ users }) => {
-    if (!users || users.length === 0) {
-        return (
-            <div>
-                <AdminSidebar />
-                <section className="orders-section">
-                    <div className="orders-content">
-                        <h2 className="orders-heading">Users List:</h2>
-                        <p className="no-data">No users found.</p>
-                    </div>
-                </section>
-            </div>
+import axios from 'axios';
+
+export const Users = () => {
+    const [users, setUsers] = useState([]);
+    useEffect(() => {
+        const fetchUsers = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/api/users/');
+                setUsers(response.data);
+            } catch (error) {
+                console.error('Error fetching users:', error);
+            }
+        };
+        fetchUsers();
+    }, []);
+
+    const [searchQuery, setSearchQuery] = useState('');
+    const [filteredUsers, setFilteredUsers] = useState(users);
+
+    const handleSearch = (e) => {
+        const query = e.target.value.toLowerCase();
+        setSearchQuery(query);
+        const filtered = users.filter(user =>
+            user.name.toLowerCase().includes(query) ||
+            user.email.toLowerCase().includes(query)
         );
-    }
+        setFilteredUsers(filtered);
+    };
 
     const formatDate = (timestamp) => {
         const date = new Date(timestamp);
@@ -31,7 +45,14 @@ export const Users = ({ users }) => {
             <section className="orders-section">
                 <div className="orders-content">
                     <h2 className="orders-heading">Users List:</h2>
-                    <br />
+                    <div className="search-bar">
+                        <input
+                            type="text"
+                            placeholder="Search by username or email"
+                            value={ searchQuery }
+                            onChange={ handleSearch }
+                        />
+                    </div>
                     <table className="orders-table">
                         <thead>
                             <tr>
@@ -42,19 +63,33 @@ export const Users = ({ users }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {users.map((user) => (
-                                <tr key={user._id} className="orders-row">
-                                    <td>{user.name}</td>
-                                    <td>{user.email}</td>
-                                    <td>{formatDate(user.createdAt)}</td>
+                            { filteredUsers && filteredUsers.length > 0 ? filteredUsers.map((user) => (
+                                <tr key={ user._id } className="orders-row">
+                                    <td>{ user.name }</td>
+                                    <td>{ user.email }</td>
+                                    <td>{ formatDate(user.createdAt) }</td>
                                     <td>
-                                        <a href={`/admin/deleteUser/${user._id}`}>
+                                        <a href={ `/admin/deleteUser/${user._id}` }>
                                             <button className="delete-button" type="submit">Delete</button>
                                         </a>
                                     </td>
                                 </tr>
-                            ))}
+                            )) : (
+                                users.map((user) => (
+                                    <tr key={ user._id } className="orders-row">
+                                        <td>{ user.name }</td>
+                                        <td>{ user.email }</td>
+                                        <td>{ formatDate(user.createdAt) }</td>
+                                        <td>
+                                            <a href={ `/admin/deleteUser/${user._id}` }>
+                                                <button className="delete-button" type="submit">Delete</button>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) }
                         </tbody>
+
                     </table>
                 </div>
             </section>

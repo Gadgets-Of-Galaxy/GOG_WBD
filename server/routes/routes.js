@@ -162,7 +162,7 @@ router.post('/api/login', async (req, res) => {
             isAdmin: user.isAdmin
         });
 
-        console.log("login success");
+        // console.log("login success");
     } catch (error) {
         res.status(500).json({ message: 'Internal server error' });
     }
@@ -706,6 +706,45 @@ router.put('/api/sellers/:id/revoke', async (req, res) => {
     } catch (error) {
         console.error('Error revoking seller approval:', error);
         return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
+router.get('/api/reviews', async (req, res) => {
+    try {
+        const reviews = await Review.find({});
+        res.json({ reviews });
+        console.log(reviews);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch reviews' });
+    }
+});
+
+
+const Review = require('../models/reviews'); 
+router.post('/api/reviews', async (req, res) => {
+    const { productId, userId, rating, reviewText } = req.body;
+    console.log(req.body.username);
+    try {
+        // Create a new review object
+        const newReview = new Review({
+            user: userId,
+            product: productId,
+            username: req.body.username,
+            rating,
+            reviewText
+        });
+
+        // Save the new review to the database
+        await newReview.save();
+
+        // Now, update the corresponding product to include this review
+        await Product.findByIdAndUpdate(productId, { $push: { reviews: newReview._id } });
+
+        res.status(201).json({ message: 'Review submitted successfully', review: newReview });
+    } catch (error) {
+        console.error('Error submitting review:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 

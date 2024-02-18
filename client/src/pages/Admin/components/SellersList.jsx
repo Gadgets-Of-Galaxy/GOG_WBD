@@ -3,21 +3,39 @@ import "../styles/adminLists.css"
 import { AdminSidebar } from "./AdminSidebar";
 import axios from 'axios';
 
-export const SellersList = ({ sellers }) => {
-    const [sellerList, setSellerList] = useState([]);
+export const SellersList = () => {
+    const [sellers, setSellers] = useState([]);
 
     useEffect(() => {
-        setSellerList(sellers);
-    }, [sellers]);
+        const fetchSellers = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/api/sellers/');
+                setSellers(response.data.sellers);
+            } catch (error) {
+                console.error('Error fetching Sellers:', error);
+            }
+        };
+        fetchSellers();
+    }, []);
 
-    const fetchSellers = async () => {
-        try {
-            const response = await axios.get('http://localhost:5000/api/sellers');
-            setSellerList(response.data);
-        } catch (error) {
-            console.error('Error fetching sellers:', error);
+    const [filteredSellers, setFilteredSellers] = useState(sellers);
+    const [sellerList, setSellerList] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const handleSearch = (e) => {
+        const query = e.target.value.toLowerCase();
+        setSearchQuery(query);
+        if (sellers) {
+            const filtered = sellers.filter(seller =>
+                seller.username.toLowerCase().includes(query) ||
+                seller.email.toLowerCase().includes(query) ||
+                seller.companyName.toLowerCase().includes(query) ||
+                seller.address.toLowerCase().includes(query)
+            );
+            setFilteredSellers(filtered);
         }
     };
+    
 
     const handleApprove = async (sellerId) => {
         try {
@@ -31,6 +49,7 @@ export const SellersList = ({ sellers }) => {
             });
             setSellerList(updatedSellers);
             window.alert('Seller approved successfully!');
+            window.location.reload();
         } catch (error) {
             console.error('Error approving seller:', error)
             window.alert('Error approving seller. Please try again.');
@@ -49,13 +68,14 @@ export const SellersList = ({ sellers }) => {
             });
             setSellerList(updatedSellers);
             window.alert('Seller approval revoked successfully!');
+            window.location.reload();
         } catch (error) {
             console.error('Error revoking seller approval:', error);
             window.alert('Error revoking seller approval. Please try again.');
         }
     };
 
-    if (!sellerList || sellerList.length === 0) {
+    if (!sellers || sellers.length === 0) {
         return (
             <div>
                 <AdminSidebar />
@@ -69,13 +89,21 @@ export const SellersList = ({ sellers }) => {
         );
     }
 
+
     return (
         <div>
             <AdminSidebar activeLink="sellerslist" />
             <section className="orders-section">
                 <div className="orders-content">
                     <h2 className="orders-heading">Sellers List:</h2>
-                    <br />
+                    <div className="search-bar">
+                        <input
+                            type="text"
+                            placeholder="Search by username, email, company name, or address"
+                            value={ searchQuery }
+                            onChange={ handleSearch }
+                        />
+                    </div>
                     <table className="orders-table">
                         <thead>
                             <tr>
@@ -88,7 +116,7 @@ export const SellersList = ({ sellers }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            { sellerList.map((seller) => (
+                        {filteredSellers && filteredSellers.length > 0 ? filteredSellers.map((seller) => (
                                 <tr key={ seller._id } className="orders-row">
                                     <td>{ seller.username }</td>
                                     <td>{ seller.email }</td>
@@ -105,13 +133,29 @@ export const SellersList = ({ sellers }) => {
                                         ) }
                                     </td>
                                 </tr>
-                            )) }
+                            )) : sellers.map((seller) => (
+                                <tr key={ seller._id } className="orders-row">
+                                    <td>{ seller.username }</td>
+                                    <td>{ seller.email }</td>
+                                    <td>{ seller.companyName }</td>
+                                    <td>{ seller.address }</td>
+                                    <td style={ { backgroundColor: seller.approved ? 'lightgreen' : 'yellow' } }>
+                                        { seller.approved ? 'Approved' : 'Not Approved' }
+                                    </td>
+                                    <td>
+                                        { seller.approved ? (
+                                            <button className="revoke-button" onClick={ () => handleRevoke(seller._id) }>Revoke</button>
+                                        ) : (
+                                            <button className="approve-button" onClick={ () => handleApprove(seller._id) }>Approve</button>
+                                        ) }
+                                    </td>
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>
             </section>
         </div>
     );
+    
 };
-
-export default SellersList;

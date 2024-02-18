@@ -1,21 +1,32 @@
 import { useEffect, useState } from "react";
 import { Header } from "../CommonComponents/components/Header";
 import { Slider } from "./components/Slider";
-import { ShopCategories } from "./components/ShopCategories";
 import { HomeBestDeals } from "./components/HomeBestDeals";
-// import { BrandSection } from "./components/BrandSection";
-import { PopularProducts } from "./components/PopularProducts";
-import { HomeCategorySection } from "./components/HomeCategorySection";
 import { BestSellingProducts } from "./components/BestSellingProducts";
 import { Footer } from "../CommonComponents/components/Footer";
 import axios from "axios";
 import { Brands } from "./components/Brands";
 
-export const Home = ({ loginuser }) => {
+export const Home = () => {
+  const storedUser = JSON.parse(localStorage.getItem('loggedInUser'));
+    const [user, setUser] = useState(storedUser || null);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/api/users/' + user._id);
+                setUser(response.data);
+            } catch (error) {
+                console.error('Error fetching user:', error);
+            }
+        };
+        if (user) {
+            fetchUser();
+        }
+    }, [user]);
+    
   const [products, setProducts] = useState([]);
   const [bestSellingProducts, setBestSellingProducts] = useState([]);
-
-  
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -57,8 +68,8 @@ export const Home = ({ loginuser }) => {
     <div>
       <Slider />
       <Brands />
-      <HomeBestDeals products={products} user={loginuser}/>
-      <BestSellingProducts products={bestSellingProducts} user={loginuser} />
+      <HomeBestDeals products={products} user={user}/>
+      <BestSellingProducts products={bestSellingProducts} user={user} />
       <Footer />
     </div>
   );
