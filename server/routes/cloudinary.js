@@ -4,11 +4,12 @@ const api_secretkey = "BICt9YAGoDn35ClvbuobPVnR3NQ";
 
 
 const cloudinary = require('cloudinary');
+
 cloudinary.config({
     cloud_name: cloud_Name,
     api_key:api_Key,
     api_secret: api_secretkey
-})
+});
 
 uploadToCloudinary = async (path, folder) => {
     try {

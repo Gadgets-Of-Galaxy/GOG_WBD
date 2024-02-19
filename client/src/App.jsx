@@ -32,15 +32,17 @@ import SellerRegister from './pages/Login_SignUp/components/SellerRegister';
 import { SellerProducts } from './pages/Seller/components/SellerProducts';
 
 function App() {
-  const [user, setUser] = useState(null);
   const [products, setProducts] = useState(null);
   const [users, setUsers] = useState(null);
   const [sellers, setSellers] = useState(null);
   const [categories, setCategories] = useState(null);
   const [orders, setOrders] = useState(null);
   const [messages, setMessages] = useState(null);
+
   const storedUser = JSON.parse(localStorage.getItem('loggedInUser'));
+  const storedSeller = JSON.parse(localStorage.getItem('loggedInSeller'));
   const [loginuser, setLoginUser] = useState(storedUser || null);
+  const [loginSeller, setLoginSeller] = useState(storedSeller || null);
   
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('loggedInUser'));
@@ -50,20 +52,11 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/api/users/' + loginuser._id);
-        setUser(response.data);
-        // console.log(user);
-      } catch (error) {
-        console.error('Error fetching user:', error);
-      }
-    };
-
-    if (loginuser) {
-      fetchUser();
+    const storedSeller = JSON.parse(localStorage.getItem('loggedInSeller'));
+    if (storedSeller) {
+      setLoginSeller(storedSeller);
     }
-  }, [loginuser]);
+  }, []);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -139,7 +132,13 @@ function App() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = token;
+    }
+  }, []);
 
+  useEffect(() => {
+    const token = localStorage.getItem('sellerToken');
     if (token) {
       axios.defaults.headers.common['Authorization'] = token;
     }
@@ -156,8 +155,21 @@ function App() {
         console.error('Error fetching user:', error);
       }
     };
-
     fetchUser();
+  }, []);
+
+  useEffect(() => {
+    const fetchSeller = async () => {
+      try {
+        if (loginSeller) {
+          const response = await axios.get(`http://localhost:5000/api/users/${loginSeller._id}`);
+          setLoginSeller(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching user:', error);
+      }
+    };
+    fetchSeller();
   }, []);
 
   const [sortedProducts, setSortedProducts] = useState([]);
@@ -171,9 +183,9 @@ function App() {
     <Router>
       <div>
         <Routes>
-          <Route path="/" element={ <><Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } /><Home loginuser={ user } /></> } />
+          <Route path="/" element={<><Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } /><Home user={ loginuser } /></>} />
           <Route path="/login" element={ <Login setLoginUser={ setLoginUser } /> } />
-          <Route path="/product/:productId" element={ <><Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } /><ProductDetailsPage user={ loginuser } /></> } />
+          <Route path="/product/:productId" element={ <><Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } /><ProductDetailsPage user={ loginuser } /></>} />
           <Route path="/category" element={ <><Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } /><Category categories={ categories } user={ loginuser } products={ products } sortedProducts={ sortedProducts } /></> } />
           <Route path='/Aboutus' element={ <Aboutus user={ loginuser } /> } />
           <Route path='/Contactus' element={ <Contactus user={ loginuser } /> } />
@@ -192,11 +204,11 @@ function App() {
           <Route path='/admin/messages' element={ loginuser?.isAdmin ? <AdminMessages messages={ messages } /> : <Navigate to="/login" /> } />
           <Route path='/admin/sellersList' element={ loginuser?.isAdmin ? <SellersList sellers={ sellers } /> : <Navigate to="/login" /> } />
 
-          <Route path="/sellerLogin" element={ <SellerLogin /> } />
+          <Route path="/sellerLogin" element={<SellerLogin setLoginSeller={setLoginSeller}/> } />
           <Route path="/sellerRegister" element={ <SellerRegister /> } />
-          <Route path='/seller' element={ <SellerDashboard /> } />
-          <Route path='/seller/addproduct' element={ <SellerAddProduct /> } />
-          <Route path="/seller/products" element={ <SellerProducts/> } />
+          <Route path='/seller' element={ loginSeller? <SellerDashboard /> : <Navigate to="/sellerLogin" />} />
+          <Route path='/seller/addproduct' element={ loginSeller? <SellerAddProduct /> : <Navigate to="/sellerLogin" />} />
+          <Route path="/seller/products" element={ loginSeller? <SellerProducts/> : <Navigate to="/sellerLogin" />} />
         </Routes>
       </div>
     </Router>

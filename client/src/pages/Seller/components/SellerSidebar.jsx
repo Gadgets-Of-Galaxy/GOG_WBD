@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const SellerSidebar = ({ activeLink, toggleSidebar, achieve }) => {
     const handleLogout = () => {
-        localStorage.removeItem('loggedInUser');
+        localStorage.removeItem('loggedInSeller');
     };
 
     const sidebarclose = () => {

@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Header } from '../../CommonComponents/components/Header';
 import { Footer } from '../../CommonComponents/components/Footer';
 import '../styles/Category.css';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 export const Category = ({ categories, products, user, sortedProducts }) => {
   // console.log("Categories", categories);

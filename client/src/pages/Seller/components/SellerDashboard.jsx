@@ -17,6 +17,14 @@ export const SellerDashboard = () => {
   const [recentSales, setRecentSales] = useState([]);
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error("Authentication token is missing");
+    }
+    axios.defaults.headers.common["Authorization"] = token;
+  },[]);
+
+  useEffect(() => {
     const fetchOrders = async () => {
       try {
         const response = await axios.get("http://localhost:5000/api/checkouts");
@@ -24,7 +32,7 @@ export const SellerDashboard = () => {
         const sortedOrders = data.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
-        const latestOrders = sortedOrders.slice(0, 3);
+        const latestOrders = sortedOrders.slice(0, 5);
         const ordersWithUserDetails = await Promise.all(
           latestOrders.map(async (order) => {
             const userResponse = await axios.get(
@@ -37,7 +45,6 @@ export const SellerDashboard = () => {
             };
           })
         );
-
         setRecentSales(ordersWithUserDetails);
       } catch (error) {
         console.error("Error fetching orders:", error);
@@ -45,19 +52,18 @@ export const SellerDashboard = () => {
     };
     fetchOrders();
   }, []);
-  console.log(recentSales);
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
-    console(isSidebarOpen);
   };
   return (
     <div>
       <SellerSidebar
         activeLink="sellerDashboard"
-        toggleSidebar={toggleSidebar}
-        achieve={isSidebarOpen}
+        toggleSidebar={ toggleSidebar }
+        achieve={ isSidebarOpen }
       />
       <section className="seller-section">
         <div className="sidebar-button">
@@ -90,22 +96,22 @@ export const SellerDashboard = () => {
                 </tr>
               </thead>
               <tbody className="seller-tbody">
-                {recentSales.map((order) =>
+                { recentSales.map((order) =>
                   order.items.map((item) => (
-                    <tr key={item._id} className="orders-row">
-                      <td>{order.user}</td>
-                      <td width="40%">{item.title}</td>
-                      <td>{item.qty}</td>
-                      <td>{item.price}</td>
-                      <td>{formatDate(order.createdAt)}</td>
+                    <tr key={ item._id } className="orders-row">
+                      <td>{ order.user }</td>
+                      <td width="40%">{ item.title }</td>
+                      <td>{ item.qty }</td>
+                      <td>{ item.price }</td>
+                      <td>{ formatDate(order.createdAt) }</td>
                     </tr>
                   ))
-                )}
+                ) }
               </tbody>
             </table>
           </div>
           <div className="customer-reviews">
-            <CustomerReview/>
+            <CustomerReview />
           </div>
         </div>
       </section>

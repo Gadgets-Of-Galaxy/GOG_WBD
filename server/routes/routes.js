@@ -6,6 +6,8 @@ const Checkout = require('../models/Checkout');
 const Cart = require('../models/Cart');
 const ContactUs = require('../models/ContactUs');
 const Category = require('../models/Category');
+const Review = require('../models/Review'); 
+const Seller = require('../models/Seller');
 
 const { uploadToCloudinary, removeFromCloudinary } = require('../routes/cloudinary');
 
@@ -71,16 +73,6 @@ router.post('/api/seller/addproduct', upload.fields([
     } catch (error) {
         console.error(error);
         res.status(500).send('Internal Server Error');
-    }
-});
-
-router.get('/api/userData', (req, res) => {
-    console.log("userdata");
-    if (req.session.user) {
-        console.log("session", req.session.user);
-        res.status(200).json({ user: req.session.user });
-    } else {
-        res.status(401).json({ message: 'User data not found' });
     }
 });
 
@@ -521,64 +513,6 @@ router.post("/api/payment/verify", async (req, res) => {
     }
 });
 
-const moment = require('moment');
-const Seller = require('../models/Seller');
-router.get('/api/admin/sales/:period', async (req, res) => {
-    try {
-        const { period } = req.params;
-
-        const endDate = moment();
-        let startDate;
-
-        switch (period) {
-            case 'day':
-                startDate = moment().subtract(1, 'days');
-                break;
-            case 'week':
-                startDate = moment().subtract(1, 'weeks');
-                break;
-            case 'month':
-                startDate = moment().subtract(1, 'months');
-                break;
-            case 'year':
-                startDate = moment().subtract(1, 'years');
-                break;
-            default:
-                return res.status(400).json({ error: 'Invalid time period' });
-        }
-
-        const salesData = await Checkout.aggregate([
-            {
-                $match: {
-                    createdAt: {
-                        $gte: startDate.toDate(),
-                        $lt: endDate.toDate(),
-                    },
-                },
-            },
-            {
-                $group: {
-                    _id: {
-                        $dateToString: { format: '%Y-%m-%d', date: '$createdAt' },
-                    },
-                    totalSales: { $sum: '$totalCost' },
-                },
-            },
-            {
-                $sort: { _id: 1 },
-            },
-        ]);
-
-        const labels = salesData.map((item) => item._id);
-        const data = salesData.map((item) => item.totalSales);
-
-        res.json({ labels, data });
-    } catch (error) {
-        console.error('Error fetching sales data:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
 router.get('/api/admin/orders', async (req, res) => {
     try {
         const checkouts = await Checkout.find();
@@ -655,17 +589,12 @@ router.post('/api/sellerlogin', async (req, res) => {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
         const token = jwt.sign({ sellerId: seller._id }, 'your-secret-key', { expiresIn: '1h' });
-
-        res.status(200).json({ message: 'Login successful', token });
+        res.status(200).json({ seller, message: 'Login successful', token });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });
-
-
-
-
 
 router.get('/api/sellers', async (req, res) => {
     try {
@@ -673,6 +602,16 @@ router.get('/api/sellers', async (req, res) => {
         res.json({ sellers });
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch sellers' });
+    }
+});
+
+router.get('/api/sellers/:id', async (req, res) => {
+    try {
+        const sellerId = req.params.id;
+        const seller = await Seller.findById(sellerId);
+        res.status(200).json(seller);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
@@ -707,5 +646,37 @@ router.put('/api/sellers/:id/revoke', async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+router.get('/api/reviews', async (req, res) => {
+    try {
+        const reviews = await Review.find({});
+        res.json({ reviews });
+        // console.log(reviews);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch reviews' });
+    }
+});
+
+router.post('/api/reviews', async (req, res) => {
+    const { productId, userId, rating, reviewText } = req.body;
+    console.log(req.body.username);
+    try {
+        const newReview = new Review({
+            user: userId,
+            product: productId,
+            username: req.body.username,
+            rating,
+            reviewText
+        });
+        await newReview.save();
+        await Product.findByIdAndUpdate(productId, { $push: { reviews: newReview._id } });
+
+        res.status(201).json({ message: 'Review submitted successfully', review: newReview });
+    } catch (error) {
+        console.error('Error submitting review:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 
 module.exports = router;

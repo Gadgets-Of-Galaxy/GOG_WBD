@@ -11,11 +11,14 @@ import { Footer } from "../CommonComponents/components/Footer";
 import axios from "axios";
 import { Brands } from "./components/Brands";
 
-export const Home = ({ loginuser }) => {
+export const Home = ({ user }) => {
   const [products, setProducts] = useState([]);
   const [bestSellingProducts, setBestSellingProducts] = useState([]);
 
   
+  useEffect(() => {
+    localStorage.removeItem('loggedInSeller');
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -57,8 +60,8 @@ export const Home = ({ loginuser }) => {
     <div>
       <Slider />
       <Brands />
-      <HomeBestDeals products={products} user={loginuser}/>
-      <BestSellingProducts products={bestSellingProducts} user={loginuser} />
+      <HomeBestDeals products={products} user={user}/>
+      <BestSellingProducts products={bestSellingProducts} user={user} />
       <Footer />
     </div>
   );

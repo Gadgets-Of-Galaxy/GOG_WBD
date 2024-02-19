@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const Review = require("./Review"); 
 
 const productSchema = Schema({
   productCode: {
@@ -83,6 +84,11 @@ const productSchema = Schema({
     type: Date,
     default: Date.now,
   },
+  reviews: [{
+    type: Schema.Types.ObjectId,
+    ref: 'reviews'
+  }]
 });
+
 
 module.exports = mongoose.model("Product", productSchema);
