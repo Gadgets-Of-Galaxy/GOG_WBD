@@ -5,9 +5,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStar as solidStar, faStarHalfAlt as halfStar } from '@fortawesome/free-solid-svg-icons';
 import { faStar as regularStar } from '@fortawesome/free-regular-svg-icons';
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 export const ProductItemSmall = (props) => {
+    const navigate = useNavigate();
     
     const user = props.user ? props.user : null;
     const productId = props.product._id;
@@ -43,9 +44,14 @@ export const ProductItemSmall = (props) => {
     }, []);
 
     const handleWishlistClick = () => {
-        fetchUserWishlists();
-        setShowWishlistOptions(!showWishlistOptions);
+        if (user) {
+            fetchUserWishlists();
+            setShowWishlistOptions(!showWishlistOptions);
+        } else {
+            navigate('/login');
+        }
     };
+    
 
     const handleCreateNewWishlist = () => {
         setCreateNewWishlist(true);

@@ -74,7 +74,8 @@ const productSchema = Schema({
     required: true,
   },
   manufacturer: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: 'Seller',
   },
   available: {
     type: Boolean,

@@ -4,17 +4,13 @@ import axios from 'axios';
 import '../styles/Seller.css';
 
 export const SellerLogin = ({setLoginSeller}) => {
-    useEffect(() => {
-        localStorage.removeItem('loggedInUser');
-    }, []);
-    
     const [formData, setFormData] = useState({
         email: '',
         password: ''
     });
 
-    const [approvalStatus, setApprovalStatus] = useState(null);
     const navigate = useNavigate();
+    const [approvalStatus, setApprovalStatus] = useState(null);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -27,22 +23,24 @@ export const SellerLogin = ({setLoginSeller}) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:5000/api/sellerlogin', formData);   
-            setLoginSeller(response.data.seller);
-            localStorage.setItem('loggedInSeller', JSON.stringify(response.data.seller));
-            localStorage.setItem('sellerToken', response.data.token);
-            setApprovalStatus(response.data.seller.approved);
-            console.log(localStorage.getItem('loggedInSeller'));
+            const response = await axios.post('http://localhost:5000/api/sellerlogin', formData);  
+            const seller = response.data.seller;
+            setLoginSeller(seller);
+            localStorage.setItem('loggedInSeller', JSON.stringify(seller));
+            setApprovalStatus(seller.approved);
+            if (seller.approved) {
+                navigate('/seller');
+            }
         } catch (error) {
             console.error('Login error:', error);
         }
     };
-
     useEffect(() => {
         if (approvalStatus === true) {
             navigate('/seller');
         }
     }, [approvalStatus, navigate]);
+
 
     return (
         <div className="container1">
@@ -67,7 +65,7 @@ export const SellerLogin = ({setLoginSeller}) => {
                 </>
             )}
         </div>
-    );  
+    );
 }
 
 export default SellerLogin;

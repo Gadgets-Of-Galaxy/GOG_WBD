@@ -102,7 +102,6 @@ table,
         th,
         td {
             text-align: center;
-            border: 2px solid black;
             border-radius: 10px;
             padding: 10px;
             white-space: nowrap;
@@ -114,7 +113,7 @@ table,
             font-size: 16px;
             justify-content: center;
             text-align: center;
-            border: 2px solid black;
+
             border-radius: 10px;
             padding: 10px;
             white-space: nowrap;
@@ -163,6 +162,8 @@ table,
         
 .sidebar {
     position: fixed;
+    z-index: 1;
+    top:0;
     height: 100%;
     width: 240px;
     background: var(--secondary-dark-color);
@@ -176,6 +177,7 @@ table,
 
 .sidebar .logo-details {
     height: 80px;
+
     display: flex;
     align-items: center;
 }
@@ -190,6 +192,7 @@ table,
 
 .sidebar .logo-details .logo_name {
     color: #fff;
+    margin-left: 1.5rem;
     font-size: 24px;
     font-weight: 500;
 }
@@ -230,6 +233,7 @@ table,
 
 .sidebar .nav-links li a .links_name {
     color: #fff;
+    margin-left: -1rem;
     font-size: 15px;
     font-weight: 400;
     white-space: nowrap;
@@ -239,6 +243,10 @@ table,
     position: absolute;
     bottom: 0;
     width: 100%;
+}
+
+.links_name{
+    margin-left: 1.5rem;
 }
 
 .home-section {
@@ -569,119 +577,3 @@ nav .profile-details i {
     white-space: normal;
     word-wrap: break-word;
 }
-
-/* Responsive Media Query */
-@media (max-width: 1240px) {
-    .sidebar {
-        width: 60px;
-    }
-
-    .sidebar.active {
-        width: 220px;
-    }
-
-    .home-section {
-        width: calc(100% - 60px);
-        left: 60px;
-    }
-
-    .sidebar.active~.home-section {
-        /* width: calc(100% - 220px); */
-        overflow: hidden;
-        left: 220px;
-    }
-
-    .home-section nav {
-        width: calc(100% - 60px);
-        left: 60px;
-    }
-
-    .sidebar.active~.home-section nav {
-        width: calc(100% - 220px);
-        left: 220px;
-    }
-}
-
-@media (max-width: 1150px) {
-    .home-content .sales-boxes {
-        flex-direction: column;
-    }
-
-    .home-content .sales-boxes .box {
-        width: 100%;
-        overflow-x: scroll;
-        margin-bottom: 30px;
-    }
-
-    .home-content .sales-boxes .top-sales {
-        margin: 0;
-    }
-}
-
-@media (max-width: 1000px) {
-    .overview-boxes .box {
-        width: calc(100% / 2 - 15px);
-        margin-bottom: 15px;
-    }
-}
-
-@media (max-width: 700px) {
-
-    nav .sidebar-button .dashboard,
-    nav .profile-details .admin_name,
-    nav .profile-details i {
-        display: none;
-    }
-
-    .home-section nav .profile-details {
-        height: 50px;
-        min-width: 40px;
-    }
-
-    .home-content .sales-boxes .sales-details {
-        width: 560px;
-    }
-}
-
-@media (max-width: 550px) {
-    .overview-boxes .box {
-        width: 100%;
-        margin-bottom: 15px;
-    }
-
-    .sidebar.active~.home-section nav .profile-details {
-        display: none;
-    }
-}
-
-@media (max-width: 400px) {
-    .sidebar {
-        width: 0;
-    }
-
-    .sidebar.active {
-        width: 60px;
-    }
-
-    .home-section {
-        width: 100%;
-        left: 0;
-    }
-
-    .sidebar.active~.home-section {
-        left: 60px;
-        width: calc(100% - 60px);
-    }
-
-    .home-section nav {
-        width: 100%;
-        left: 0;
-    }
-
-    .sidebar.active~.home-section nav {
-        left: 60px;
-        width: calc(100% - 60px);
-    }
-}
-
-

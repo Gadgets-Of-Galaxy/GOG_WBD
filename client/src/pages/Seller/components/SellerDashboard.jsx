@@ -6,6 +6,10 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 export const SellerDashboard = () => {
+  useEffect(() => {
+    localStorage.removeItem('loggedInUser');
+}, []);
+
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     const day = date.getDate().toString().padStart(2, "0");
@@ -15,14 +19,6 @@ export const SellerDashboard = () => {
   };
 
   const [recentSales, setRecentSales] = useState([]);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error("Authentication token is missing");
-    }
-    axios.defaults.headers.common["Authorization"] = token;
-  },[]);
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -52,18 +48,19 @@ export const SellerDashboard = () => {
     };
     fetchOrders();
   }, []);
-
+  
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+    console(isSidebarOpen);
   };
   return (
     <div>
       <SellerSidebar
         activeLink="sellerDashboard"
-        toggleSidebar={ toggleSidebar }
-        achieve={ isSidebarOpen }
+        toggleSidebar={toggleSidebar}
+        achieve={isSidebarOpen}
       />
       <section className="seller-section">
         <div className="sidebar-button">
@@ -96,22 +93,22 @@ export const SellerDashboard = () => {
                 </tr>
               </thead>
               <tbody className="seller-tbody">
-                { recentSales.map((order) =>
+                {recentSales.map((order) =>
                   order.items.map((item) => (
-                    <tr key={ item._id } className="orders-row">
-                      <td>{ order.user }</td>
-                      <td width="40%">{ item.title }</td>
-                      <td>{ item.qty }</td>
-                      <td>{ item.price }</td>
-                      <td>{ formatDate(order.createdAt) }</td>
+                    <tr key={item._id} className="orders-row">
+                      <td>{order.user}</td>
+                      <td width="40%">{item.title}</td>
+                      <td>{item.qty}</td>
+                      <td>{item.price}</td>
+                      <td>{formatDate(order.createdAt)}</td>
                     </tr>
                   ))
-                ) }
+                )}
               </tbody>
             </table>
           </div>
           <div className="customer-reviews">
-            <CustomerReview />
+            <CustomerReview/>
           </div>
         </div>
       </section>

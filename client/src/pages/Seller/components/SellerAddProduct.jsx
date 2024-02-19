@@ -7,7 +7,7 @@ import "../styles/SellerAddProduct.css";
 import { faImage } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export const SellerAddProduct = () => {
+export const SellerAddProduct = ({seller}) => {
   const [formData, setFormData] = useState({
     productCode: "",
     title: "",
@@ -22,13 +22,14 @@ export const SellerAddProduct = () => {
     features4: "",
     mrp: "",
     price: "",
-    reviewed: 2431,
-    sold: 12300,
+    reviewed: 0,
+    sold: 100,
     stock: "",
     brand: "",
-    manufacturer: "Kali",
+    manufacturer: seller._id,
     available: true,
     category: "",
+    rating: 0
   });
 
   const handleInputChange = (e) => {
@@ -70,28 +71,6 @@ export const SellerAddProduct = () => {
 
       if (response.ok) {
         console.log("Image uploaded successfully!");
-        setFormData({
-          productCode: "",
-          title: "",
-          imagePath: "",
-          imagethumbnail1: "",
-          imagethumbnail2: "",
-          imagethumbnail3: "",
-          description: "",
-          features1: "",
-          features2: "",
-          features3: "",
-          features4: "",
-          mrp: "",
-          price: "",
-          reviewed: 2431,
-          sold: 12300,
-          stock: "",
-          brand: "",
-          manufacturer: "Kali",
-          available: true,
-          category: "",
-        });
       } else {
         console.error("Image upload failed.");
       }
@@ -258,12 +237,12 @@ export const SellerAddProduct = () => {
                     <div className="product-images-left">
                       <div className="drag_image">
                         {!imageUrls[0] && (
-                          <h3 class="dynamic_message">
+                          <h3 className="dynamic_message">
                             Drag your image here or
                           </h3>
                         )}
-                        <label class="label">
-                          <span class="browse-files">
+                        <label className="label">
+                          <span className="browse-files">
                             {!imageUrls[0] && (
                               <FontAwesomeIcon
                                 className="header-right-icon"
@@ -295,9 +274,9 @@ export const SellerAddProduct = () => {
                         )}
                       </div>
                       <div className="drag_image">
-                      {!imageUrls[1] && (<h3 class="dynamic_message">Drag your image here or</h3>)}
-                        <label class="label">
-                          <span class="browse-files">
+                      {!imageUrls[1] && (<h3 className="dynamic_message">Drag your image here or</h3>)}
+                        <label className="label">
+                          <span className="browse-files">
                           {!imageUrls[1] && (<FontAwesomeIcon
                               className="header-right-icon"
                               icon={faImage}
@@ -312,7 +291,7 @@ export const SellerAddProduct = () => {
                                 handleInputImageChange(e, "imagethumbnail1", 1)
                               }
                             />
-                            {!imageUrls[1] && (<span class="browse-files-text">browse file</span>)}
+                            {!imageUrls[1] && (<span className="browse-files-text">browse file</span>)}
                             {!imageUrls[1] && (<span className="text-small">from device</span>)}
                           </span>
                         </label>
@@ -323,11 +302,11 @@ export const SellerAddProduct = () => {
                     </div>
                     <div className="product-images-right">
                       <div className="drag_image2">
-                      {!imageUrls[2] && <h3 class="dynamic_message2">
+                      {!imageUrls[2] && <h3 className="dynamic_message2">
                           Drag your image here or
                         </h3>}
-                        <label class="label">
-                          <span class="browse-files">
+                        <label className="label">
+                          <span className="browse-files">
                           {!imageUrls[2] && <FontAwesomeIcon
                               className="image2"
                               icon={faImage}
@@ -342,7 +321,7 @@ export const SellerAddProduct = () => {
                                 handleInputImageChange(e, "imagethumbnail2", 2)
                               }
                             />
-                            {!imageUrls[2] &&  <span class="browse-files-text2">browse file</span>}
+                            {!imageUrls[2] &&  <span className="browse-files-text2">browse file</span>}
                             {!imageUrls[2] && <span className="text-small2">from device</span>}
                           </span>
                         </label>
@@ -351,11 +330,11 @@ export const SellerAddProduct = () => {
                         )}
                       </div>
                       <div className="drag_image2">
-                      {!imageUrls[3] && <h3 class="dynamic_message2">
+                      {!imageUrls[3] && <h3 className="dynamic_message2">
                           Drag your image here or
                         </h3>}
-                        <label class="label">
-                          <span class="browse-files">
+                        <label className="label">
+                          <span className="browse-files">
                           {!imageUrls[3] &&<FontAwesomeIcon
                               className="image2"
                               icon={faImage}
@@ -370,7 +349,7 @@ export const SellerAddProduct = () => {
                                 handleInputImageChange(e, "imagethumbnail3", 3)
                               }
                             />
-                            {!imageUrls[3] &&<span class="browse-files-text2">browse file</span>}
+                            {!imageUrls[3] &&<span className="browse-files-text2">browse file</span>}
                             {!imageUrls[3] &&<span className="text-small2">from device</span>}
                           </span>
                         </label>

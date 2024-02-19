@@ -26,7 +26,7 @@ export const SellerRegister = () => {
         e.preventDefault();
         try {
             const response = await axios.post('http://localhost:5000/api/sellerregister', formData);
-            // console.log(response.data);
+            console.log(response.data);
             navigate('/SellerLogin');
         } catch (error) {
             console.error('Registration error:', error);
