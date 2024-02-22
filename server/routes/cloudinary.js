@@ -2,7 +2,6 @@ const cloud_Name = "products-gog";
 const api_Key = "362596442895367";
 const api_secretkey = "BICt9YAGoDn35ClvbuobPVnR3NQ";
 
-
 const cloudinary = require('cloudinary');
 cloudinary.config({
     cloud_name: cloud_Name,

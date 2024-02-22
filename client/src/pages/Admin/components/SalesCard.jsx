@@ -22,7 +22,7 @@ const Card = (props) => {
   // console.log(props.months);
   const [expanded1, setExpanded1] = useState(false);
   return (
-    <LayoutGroup id="a">
+    <LayoutGroup id="b">
       {expanded1 ? (
         <ExpandedCard1
           param={props}
@@ -119,16 +119,16 @@ function ExpandedCard1({ param, setExpanded1, months }) {
       <div className="chartContainer">
         <Chart series={param.series} type="area" options={data.options} />
       </div>
-      <span>Last 6 months</span>
+      <span>Last 6 Months</span>
     </motion.div>
   );
 }
 
 const card = [
   {
-    title: "Sales",
+    title: "Orders",
     color: {
-      backGround: "linear-gradient(180deg, #efb369 0%, #c97d20 100%)",
+      backGround: "linear-gradient(180deg, #b9f3f5  0%,  #5f9ea0 100%)",
       boxShadow: "0px 10px 20px 0px #e0c6f5",
     },
     barValue: 70,
@@ -136,7 +136,7 @@ const card = [
     png: UilUsdSquare,
     series: [
       {
-        name: "Sales",
+        name: "Orders",
         data: [31, 40, 28, 51, 42, 109, 100],
       },
     ],
@@ -179,7 +179,7 @@ const SalesCard = (props) => {
 
   const order_data = [
     {
-      name: "Sales",
+      name: "Orders",
       data: orderCounts,
     },
   ];

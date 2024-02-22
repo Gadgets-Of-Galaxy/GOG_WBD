@@ -5,6 +5,10 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 export const AdminDashboard = () => {
+  useEffect(() => {
+    localStorage.removeItem('loggedInSeller');
+  }, []);
+  
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);
     const day = date.getDate().toString().padStart(2, "0");
@@ -16,26 +20,18 @@ export const AdminDashboard = () => {
   const [recentSales, setRecentSales] = useState([]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      throw new Error("Authentication token is missing");
-    }
-    axios.defaults.headers.common["Authorization"] = token;
-  }, []);
-
-  useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/checkouts");
+        const response = await axios.get("http://localhost:5000/api/user/checkouts");
         const data = await response.data.checkouts;
         const sortedOrders = data.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
-        const latestOrders = sortedOrders.slice(0, 5);
+        const latestOrders = sortedOrders.slice(0, 3);
         const ordersWithUserDetails = await Promise.all(
           latestOrders.map(async (order) => {
             const userResponse = await axios.get(
-              `http://localhost:5000/api/users/${order.user}`
+              `http://localhost:5000/api/user/users/${order.user}`
             );
             const userData = userResponse.data;
             return {

@@ -88,7 +88,11 @@ const productSchema = Schema({
   reviews: [{
     type: Schema.Types.ObjectId,
     ref: 'reviews'
-  }]
+  }],
+  rating: {
+    type: Number,
+    required: true,
+  }
 });
 
 

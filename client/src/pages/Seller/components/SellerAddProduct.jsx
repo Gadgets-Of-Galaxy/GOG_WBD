@@ -1,14 +1,15 @@
 import "../styles/seller.css";
 import { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { SellerSidebar } from "./SellerSidebar";
-import { AddProductPopUp } from "./AddProductPopUp";
 import "../styles/SellerAddProduct.css";
 import { faImage } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const SellerAddProduct = ({seller}) => {
-  const [formData, setFormData] = useState({
+  const navigate = useNavigate();
+  const initialFormData = {
     productCode: "",
     title: "",
     imagePath: "",
@@ -30,7 +31,8 @@ export const SellerAddProduct = ({seller}) => {
     available: true,
     category: "",
     rating: 0
-  });
+  };
+  const [formData, setFormData] = useState(initialFormData);
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
@@ -41,7 +43,6 @@ export const SellerAddProduct = ({seller}) => {
         [name]: files[0], 
       });
     } else if (name === "category") {
-
       setFormData({
         ...formData,
         [name]: value,
@@ -69,8 +70,10 @@ export const SellerAddProduct = ({seller}) => {
         }
       );
 
-      if (response.ok) {
-        console.log("Image uploaded successfully!");
+      if (response.status === 201) {
+        window.alert("Product Added successfully!");
+        navigate('/seller/products');
+
       } else {
         console.error("Image upload failed.");
       }
@@ -138,7 +141,7 @@ export const SellerAddProduct = ({seller}) => {
   const closePopup = () => {
     setIsPopupOpen(false);
   };
-  console.log(isPopupOpen);
+  // console.log(isPopupOpen);
 
   return (
     <>
@@ -147,7 +150,7 @@ export const SellerAddProduct = ({seller}) => {
       <SellerSidebar activeLink="addproduct" />
       
       <section className="home-section">
-      <button onClick={openPopup}>Test</button>
+      {/* <button onClick={openPopup}>Test</button> */}
         <div className="seller-content">
           <div className="seller-selection">
             <h3>Products</h3>
@@ -359,7 +362,7 @@ export const SellerAddProduct = ({seller}) => {
                       </div>
                     </div>
                   </div>
-                  <h4 className="product-feauters">Feauters</h4>
+                  <h4 className="product-feauters">Features</h4>
                   <div className="form-right-bottom">
                     <div className="feauters-left">
                       <div className="product_feauters all_inputs">

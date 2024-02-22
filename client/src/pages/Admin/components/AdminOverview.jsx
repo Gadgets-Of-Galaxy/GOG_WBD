@@ -7,11 +7,24 @@ import RevenueCard from "./RevenueCards";
 
 export const AdminOverview = () => {
   const [orders, setOrders] = useState([]);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/user/users');
+        setUsers(response.data);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+    fetchUsers();
+  }, []);
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/checkouts");
+        const response = await axios.get("http://localhost:5000/api/user/checkouts");
         const data = await response.data.checkouts;
         setOrders(data);
       } catch (error) {
@@ -23,8 +36,8 @@ export const AdminOverview = () => {
   
   return (
     <div className="cards-container">
+      <Cards users={users}/>
       <SalesCard orders = {orders}/>
-      <Cards />
       <RevenueCard  orders={orders}/>
     </div>
   );

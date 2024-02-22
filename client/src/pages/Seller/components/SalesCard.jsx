@@ -19,12 +19,15 @@ import {
 } from "@iconscout/react-unicons";
 
 const Card = (props) => {
-    // console.log(props.months);
   const [expanded1, setExpanded1] = useState(false);
   return (
     <LayoutGroup id="a">
       {expanded1 ? (
-        <ExpandedCard1 param={props} months={props.months}setExpanded1={() => setExpanded1(false)} />
+        <ExpandedCard1
+          param={props}
+          months={props.months}
+          setExpanded1={() => setExpanded1(false)}
+        />
       ) : (
         <CompactCard1 param={props} setExpanded1={() => setExpanded1(true)} />
       )}
@@ -46,11 +49,7 @@ function CompactCard1({ param, setExpanded1 }) {
     >
       <div className="radialBar">
         <span>Orders</span>
-        <CircularProgressbar
-          value={param.value}
-          text={`${param.value}`}
-        />
-        
+        <CircularProgressbar value={param.value} text={`${param.value}`} />
       </div>
 
       <div className="detail">
@@ -126,14 +125,14 @@ function ExpandedCard1({ param, setExpanded1, months }) {
 
 const card = [
   {
-    title: "Sales",
+    title: "Orders",
     color: {
-      backGround: "linear-gradient(180deg, #efb369 0%, #c97d20 100%)",
+      backGround: "linear-gradient(180deg, #b9f3f5  0%,  #5f9ea0 100%)",
       boxShadow: "0px 10px 20px 0px #e0c6f5",
     },
     barValue: 70,
     value: "25,970",
-    png: UilUsdSquare,
+    png: UilPackage,
     series: [
       {
         name: "Sales",
@@ -143,58 +142,38 @@ const card = [
   },
 ];
 
-const SalesCard = () => {
-  const [orders, setOrders] = useState([]);
+const SalesCard = (props) => {
+  const orders = props.sales;
+  const orderDates = orders.map((order) => new Date(order.createdAt));
 
-  useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const response = await axios.get("http://localhost:5000/api/checkouts");
-        const data = await response.data.checkouts;
-        setOrders(data);
-      } catch (error) {
-        console.error("Error fetching orders:", error);
-      }
-    };
-    fetchOrders();
-  }, []);
-
-  
-  const orderDates = orders.map(order => new Date(order.createdAt));
-
-const ordersByMonth = {};
-orderDates.forEach(date => {
+  const ordersByMonth = {};
+  orderDates.forEach((date) => {
     const yearMonth = `${date.getFullYear()}-${date.getMonth() + 1}`;
     ordersByMonth[yearMonth] = (ordersByMonth[yearMonth] || 0) + 1;
-});
+  });
 
-const months = [];
-const orderCounts = [];
+  const months = [];
+  const orderCounts = [];
 
-const today = new Date();
-let currentMonth = today.getMonth() + 1;
-let currentYear = today.getFullYear();
+  const today = new Date();
+  let currentMonth = today.getMonth() + 1;
+  let currentYear = today.getFullYear();
 
-
-
-for (let i = 0; i < 6; i++) {
+  for (let i = 0; i < 6; i++) {
     if (currentMonth === 0) {
-        currentMonth = 12;
-        currentYear--;
+      currentMonth = 12;
+      currentYear--;
     }
     const yearMonth = `${currentYear}-${currentMonth}`;
     months.unshift(yearMonth);
     orderCounts.unshift(ordersByMonth[yearMonth] || 0);
     currentMonth--;
-}
-let total_orders = orderCounts.reduce((total, count) => total + count, 0);
+  }
+  let total_orders = orderCounts.reduce((total, count) => total + count, 0);
+  // console.log(months);
+  // console.log(orderCounts);
 
-
-// console.log(months);
-// console.log(orderCounts);
-// console.log(total_orders);
-
-const order_data =[
+  const order_data = [
     {
       name: "Sales",
       data: orderCounts,

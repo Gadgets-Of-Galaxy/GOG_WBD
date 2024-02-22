@@ -16,14 +16,22 @@ const reviewSchema = Schema({
         ref: 'Product',
         required: true
     },
-    rating: {
+    reviewRating: {
         type: Number,
+        required: true
+    },
+    reviewTitle: {
+        type: String,
         required: true
     },
     reviewText: {
         type: String,
         required: true
-    }
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
 });
 
 module.exports = mongoose.model("Review", reviewSchema);

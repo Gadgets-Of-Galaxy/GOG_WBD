@@ -32,7 +32,9 @@ export const UserNavLinks = ({ activeLink }) => {
                     </a>
                 </li>
                 <li>
-                    <a href="/myOrders">
+                    <a href="/myOrders"
+                    className={activeLink === "MyOrders" ? "active" : ""}
+                    >
                         <i className='bx bx-list-ul'></i>
                         <span className="links_name">My Orders</span>
                     </a>

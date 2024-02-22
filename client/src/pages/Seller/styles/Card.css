@@ -15,16 +15,23 @@
     box-shadow: none !important;
 }
 .radialBar{
-    flex:1 1;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    gap:1rem;
+    /* justify-content: flex-end; */
+    gap:3rem;
 }
+.radialBar span{
+    margin-left: 1rem;
+    font-size: 1.3rem !important;
+}
+
 .CircularProgressbar{
     width: 5rem !important;
     overflow: visible;
 
+}
+.revenue span{
+    margin-top: -2rem;
 }
 
 .CircularProgressbar-path{

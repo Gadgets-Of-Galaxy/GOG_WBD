@@ -1,11 +1,16 @@
 @import url('https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900&display=swap');
-/* 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-} */
+
+.container1 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 400px;
+    width: 100%;
+    padding: 20px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+}
 
 .login-section {
     position: relative;
@@ -167,4 +172,10 @@
     .login-section .container .user .formBx {
         width: 100%;
     }
+}
+
+.error {
+    color: red;
+    font-size: 1rem;
+    margin-top: 0.2rem;
 }

@@ -4,20 +4,9 @@ export const UserProfile = ({user}) => {
     return (
         <div>
             <section className="home-section">
-                <nav>
-                    <div className="sidebar-button">
-                        <i className='bx bx-menu sidebarBtn'></i>
-                        <span className="dashboard">My Profile</span>
-                    </div>
-                    <div className="search-box">
-                        <input type="text" placeholder="Search..." />
-                        <i className='bx bx-search'></i>
-                    </div>
-                </nav>
-
                 <div className="home-content uprofilepage">
-                    <h3 className="font-weight-bold"><i className='bx bxs-user'></i> MY PROFILE</h3>
-                    <br />
+                    <h3 className="font-weight-bold userhead"> MY PROFILE</h3>
+                    <hr className="userhead-hr" />
                     <div id="profile-info">
                         <div className="flex-item ">
                             <p className='key'>Name</p>

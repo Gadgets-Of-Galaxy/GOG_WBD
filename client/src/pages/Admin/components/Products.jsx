@@ -10,7 +10,7 @@ export const Products = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/products/');
+                const response = await axios.get('http://localhost:5000/api/user/products');
                 setProducts(response.data.products);
             } catch (error) {
                 console.error('Error fetching users:', error);
@@ -33,13 +33,15 @@ export const Products = () => {
         setFilteredProducts(filtered);
     };
 
+    let serialNumber = 1;
+
     return (
         <div>
             <AdminSidebar activeLink="productslist" />
             <section className="orders-section">
-                <div className="orders-content">
+                <div className="orders-content marginn">
                     <h2 className="orders-heading">Product Details:</h2>
-                    <div className="search-bar">
+                    <div className="search-bar search-margin">
                         <input
                             type="text"
                             placeholder="Search by product name, code, or brand"
@@ -50,53 +52,56 @@ export const Products = () => {
                     <table className="orders-table">
                         <thead>
                             <tr>
+                                <th><b>S.No</b></th>
                                 <th><b>Product Image</b></th>
                                 <th><b>Product Code</b></th>
-                                {/* <th><b>Product Name</b></th> */}
+                                <th><b>Product Name</b></th>
                                 <th><b>Brand</b></th>
                                 <th><b>Sold</b></th>
                                 <th><b>Available</b></th>
                                 <th><b>MRP</b></th>
                                 <th><b>Current Price</b></th>
-                                <th><b>Action</b></th>
+                                {/* <th><b>Action</b></th> */}
                             </tr>
                         </thead>
                         <tbody>
                             { filteredProducts && filteredProducts.length > 0 ? filteredProducts.map((product) => (
                                 <tr key={ product._id } className="orders-row">
+                                <td>{serialNumber++}</td>
                                     <td>
-                                        <img src={ `/${product.imagePath}` } alt="Product" className="product-image" />
+                                        <img src={ `${product.imagePath}` } alt="Product" className="product-image" />
                                     </td>
                                     <td>{ product.productCode }</td>
-                                    {/* <td>{ product.title }</td> */}
+                                    <td>{ product.title }</td>
                                     <td>{ product.brand }</td>
                                     <td>{ product.sold }</td>
                                     <td>{ product.stock }</td>
                                     <td>{ product.mrp }</td>
                                     <td>{ product.price }</td>
-                                    <td>
+                                    {/* <td>
                                         <a href={ `/admin/deleteProduct/${product._id}` }>
                                             <button className="delete-button" type="submit">Delete</button>
                                         </a>
-                                    </td>
+                                    </td> */}
                                 </tr>
                             )) : products.map((product) => (
                                 <tr key={ product._id } className="orders-row">
+                                    <td>{serialNumber++}</td>
                                     <td>
-                                        <img src={ `/${product.imagePath}` } alt="Product" className="product-image" />
+                                        <img src={ `${product.imagePath}` } alt="Product" className="product-image" />
                                     </td>
                                     <td>{ product.productCode }</td>
-                                    {/* <td>{ product.title }</td> */}
+                                    <td>{ product.title }</td>
                                     <td>{ product.brand }</td>
                                     <td>{ product.sold }</td>
                                     <td>{ product.stock }</td>
                                     <td>{ product.mrp }</td>
                                     <td>{ product.price }</td>
-                                    <td>
+                                    {/* <td>
                                         <a href={ `/admin/deleteProduct/${product._id}` }>
                                             <button className="delete-button" type="submit">Delete</button>
                                         </a>
-                                    </td>
+                                    </td> */}
                                 </tr>
                             )) }
                         </tbody>

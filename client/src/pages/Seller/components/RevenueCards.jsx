@@ -1,6 +1,6 @@
 import { CardsData } from "../Data/Data";
 import "../styles/Cards.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/Card.css";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
@@ -20,9 +20,13 @@ import {
 const Card = (props) => {
   const [expanded1, setExpanded1] = useState(false);
   return (
-    <LayoutGroup id ="c">
+    <LayoutGroup id="c">
       {expanded1 ? (
-        <ExpandedCard1 param={props} setExpanded1={() => setExpanded1(false)} />
+        <ExpandedCard1
+          param={props}
+          months={props.months}
+          setExpanded1={() => setExpanded1(false)}
+        />
       ) : (
         <CompactCard1 param={props} setExpanded1={() => setExpanded1(true)} />
       )}
@@ -42,24 +46,19 @@ function CompactCard1({ param, setExpanded1 }) {
       onClick={setExpanded1}
       layoutId="expandableCard"
     >
-      <div className="radialBar">
-        <CircularProgressbar
-          value={param.barValue}
-          text={`${param.barValue}%`}
-        />
-        <span>{param.title}</span>
-      </div>
+      <div className="radialBar revenue">{param.title}</div>
 
       <div className="detail">
         <Png />
-        <span>${param.value}</span>
-        <span>Last 24 Hours</span>
+        <span>Rs {param.value}</span>
+        <span>Last 6 months</span>
       </div>
     </motion.div>
   );
 }
 
-function ExpandedCard1({ param, setExpanded1 }) {
+function ExpandedCard1({ param, setExpanded1, months }) {
+  console.log(months);
   const data = {
     options: {
       chart: {
@@ -96,15 +95,7 @@ function ExpandedCard1({ param, setExpanded1 }) {
       },
       xaxis: {
         type: "datetime",
-        categories: [
-          "2018-09-19T00:00:00.000Z",
-          "2018-09-19T01:30:00.000Z",
-          "2018-09-19T02:30:00.000Z",
-          "2018-09-19T03:30:00.000Z",
-          "2018-09-19T04:30:00.000Z",
-          "2018-09-19T05:30:00.000Z",
-          "2018-09-19T06:30:00.000Z",
-        ],
+        categories: months,
       },
     },
   };
@@ -131,7 +122,7 @@ function ExpandedCard1({ param, setExpanded1 }) {
 
 const card = [
   {
-    title: "Sales",
+    title: "Revenue",
     color: {
       backGround: "linear-gradient(180deg, #efb369 0%, #c97d20 100%)",
       boxShadow: "0px 10px 20px 0px #e0c6f5",
@@ -148,7 +139,46 @@ const card = [
   },
 ];
 
-const RevenueCard = () => {
+const RevenueCard = (props) => {
+  const orders = props.sales;
+
+  const ordersByMonth = {};
+
+  orders.forEach((order) => {
+    const date = new Date(order.createdAt);
+    const yearMonth = `${date.getFullYear()}-${date.getMonth() + 1}`;
+    ordersByMonth[yearMonth] =
+      (ordersByMonth[yearMonth] || 0) + order.totalCost;
+  });
+
+  const months = [];
+  const totalAmounts = [];
+
+  const today = new Date();
+  let currentMonth = today.getMonth() + 1;
+  let currentYear = today.getFullYear();
+
+  for (let i = 0; i < 6; i++) {
+    if (currentMonth === 0) {
+      currentMonth = 12;
+      currentYear--;
+    }
+    const yearMonth = `${currentYear}-${currentMonth}`;
+    months.unshift(yearMonth);
+    totalAmounts.unshift(ordersByMonth[yearMonth] || 0);
+    currentMonth--;
+  }
+
+  // console.log(months);
+  // console.log(totalAmounts);
+  let total_amount = totalAmounts.reduce((total, count) => total + count, 0);
+  const revenue_data = [
+    {
+      name: "Sales",
+      data: totalAmounts,
+    },
+  ];
+
   return (
     <div className="Cards">
       <div className="parentContainer">
@@ -156,9 +186,10 @@ const RevenueCard = () => {
           title={card[0].title}
           color={card[0].color}
           barValue={card[0].barValue}
-          value={card[0].value}
+          value={total_amount}
           png={card[0].png}
-          series={card[0].series}
+          series={revenue_data}
+          months={months}
         />
       </div>
     </div>

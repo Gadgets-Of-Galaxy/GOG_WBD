@@ -9,7 +9,7 @@ export const Users = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/users/');
+                const response = await axios.get('http://localhost:5000/api/user/users/');
                 setUsers(response.data);
             } catch (error) {
                 console.error('Error fetching users:', error);
@@ -17,6 +17,16 @@ export const Users = () => {
         };
         fetchUsers();
     }, []);
+
+    const deleteUser = async (userId) => {
+        try {
+            const response = await axios.delete(`http://localhost:5000/api/admin/deleUser/${userId}`);
+            window.alert(response.data.user);
+            setUsers(users.filter(user => user._id !== userId));
+        } catch (error) {
+            console.error('Error deleting user:', error);
+        }
+    };
 
     const [searchQuery, setSearchQuery] = useState('');
     const [filteredUsers, setFilteredUsers] = useState(users);
@@ -45,7 +55,7 @@ export const Users = () => {
             <section className="orders-section">
                 <div className="orders-content">
                     <h2 className="orders-heading">Users List:</h2>
-                    <div className="search-bar">
+                    <div className="search-bar search-margin">
                         <input
                             type="text"
                             placeholder="Search by username or email"
@@ -59,7 +69,7 @@ export const Users = () => {
                                 <th><b>Username</b></th>
                                 <th><b>Email</b></th>
                                 <th><b>Created At</b></th>
-                                <th><b>Action</b></th>
+                                {/* <th><b>Action</b></th> */}
                             </tr>
                         </thead>
                         <tbody>
@@ -68,11 +78,9 @@ export const Users = () => {
                                     <td>{ user.name }</td>
                                     <td>{ user.email }</td>
                                     <td>{ formatDate(user.createdAt) }</td>
-                                    <td>
-                                        <a href={ `/admin/deleteUser/${user._id}` }>
-                                            <button className="delete-button" type="submit">Delete</button>
-                                        </a>
-                                    </td>
+                                    {/* <td>
+                                        <button className="delete-button" onClick={ () => deleteUser(user._id) }>Delete</button>
+                                    </td> */}
                                 </tr>
                             )) : (
                                 users.map((user) => (
@@ -80,11 +88,9 @@ export const Users = () => {
                                         <td>{ user.name }</td>
                                         <td>{ user.email }</td>
                                         <td>{ formatDate(user.createdAt) }</td>
-                                        <td>
-                                            <a href={ `/admin/deleteUser/${user._id}` }>
-                                                <button className="delete-button" type="submit">Delete</button>
-                                            </a>
-                                        </td>
+                                        {/* <td>
+                                            <button className="delete-button" onClick={ () => deleteUser(user._id) }>Delete</button>
+                                        </td> */}
                                     </tr>
                                 ))
                             ) }

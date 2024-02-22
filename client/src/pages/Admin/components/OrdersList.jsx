@@ -48,7 +48,7 @@ export const OrdersList = () => {
             <section className="orders-section">
                 <div className="orders-content">
                     <h2 className="orders-heading">Orders List:</h2>
-                    <div className="search-bar">
+                    <div className="search-bar search-margin">
                         <input
                             type="text"
                             placeholder="Search by product name or product code"
@@ -77,7 +77,7 @@ export const OrdersList = () => {
                                             <td>{serialNumber++}</td>
                                             <td>{item.productCode}</td>
                                             <td>
-                                                <img src={`/${item.imagePath}`} alt="Product" className="product-image" />
+                                                <img src={`${item.imagePath}`} alt="Product" className="product-image" />
                                             </td>
                                             <td>{item.title}</td>
                                             <td>{item.qty}</td>

@@ -3,7 +3,7 @@ const router = express();
 const Razorpay = require("razorpay");
 const crypto = require("crypto");
 
-router.post("/api/payment/orders", async (req, res) => {
+router.post("/orders", async (req, res) => {
     try {
         const instance = new Razorpay({
             key_id: "rzp_test_Gj1HHlsQFVyVat",
@@ -29,7 +29,7 @@ router.post("/api/payment/orders", async (req, res) => {
     }
 });
 
-router.post("/api/payment/verify", async (req, res) => {
+router.post("/verify", async (req, res) => {
     try {
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
             req.body;

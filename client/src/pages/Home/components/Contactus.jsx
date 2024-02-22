@@ -90,7 +90,7 @@ export const Contactus = () => {
         }
 
         try {
-            const response = await axios.post('http://localhost:5000/api/contactus', formData);
+            const response = await axios.post('http://localhost:5000/api/user/contactus', formData);
             window.alert(response.data);
             setError('');
             navigate('/');

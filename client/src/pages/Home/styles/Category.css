@@ -182,3 +182,11 @@
 .item button:disabled:hover {
   background-color: #ccc;
 }
+.category-products{
+  display: flex;
+  flex-direction: row;
+}
+
+.product-category-s{
+  width: 19vw !important
+}

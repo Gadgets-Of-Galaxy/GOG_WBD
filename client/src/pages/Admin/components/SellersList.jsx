@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import "../styles/adminLists.css"
 import { AdminSidebar } from "./AdminSidebar";
 import axios from 'axios';
@@ -9,7 +9,7 @@ export const SellersList = () => {
     useEffect(() => {
         const fetchSellers = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/sellers/');
+                const response = await axios.get('http://localhost:5000/api/seller');
                 setSellers(response.data.sellers);
             } catch (error) {
                 console.error('Error fetching Sellers:', error);
@@ -29,17 +29,15 @@ export const SellersList = () => {
             const filtered = sellers.filter(seller =>
                 seller.username.toLowerCase().includes(query) ||
                 seller.email.toLowerCase().includes(query) ||
-                seller.companyName.toLowerCase().includes(query) ||
-                seller.address.toLowerCase().includes(query)
+                seller.companyName.toLowerCase().includes(query)
             );
             setFilteredSellers(filtered);
         }
     };
-    
 
     const handleApprove = async (sellerId) => {
         try {
-            await axios.put(`http://localhost:5000/api/sellers/${sellerId}/approve`);
+            await axios.put(`http://localhost:5000/api/seller/${sellerId}/approve`);
             const updatedSellers = sellerList.map(seller => {
                 if (seller._id === sellerId) {
                     return { ...seller, approved: true };
@@ -58,7 +56,7 @@ export const SellersList = () => {
 
     const handleRevoke = async (sellerId) => {
         try {
-            await axios.put(`http://localhost:5000/api/sellers/${sellerId}/revoke`);
+            await axios.put(`http://localhost:5000/api/seller/${sellerId}/revoke`);
             const updatedSellers = sellerList.map(seller => {
                 if (seller._id === sellerId) {
                     return { ...seller, isSeller: false };
@@ -89,6 +87,8 @@ export const SellersList = () => {
         );
     }
 
+    let serialNumber = 1;
+
 
     return (
         <div>
@@ -107,10 +107,11 @@ export const SellersList = () => {
                     <table className="orders-table">
                         <thead>
                             <tr>
+                                <th><b>S.No</b></th>
                                 <th><b>Seller Name</b></th>
                                 <th><b>Email</b></th>
                                 <th><b>Company</b></th>
-                                <th><b>Address</b></th>
+                                <th><b>Rating</b></th>
                                 <th><b>Status</b></th>
                                 <th><b>Action</b></th>
                             </tr>
@@ -118,6 +119,7 @@ export const SellersList = () => {
                         <tbody>
                         {filteredSellers && filteredSellers.length > 0 ? filteredSellers.map((seller) => (
                                 <tr key={ seller._id } className="orders-row">
+                                    <td>{serialNumber++}</td>
                                     <td>{ seller.username }</td>
                                     <td>{ seller.email }</td>
                                     <td>{ seller.companyName }</td>
@@ -135,6 +137,7 @@ export const SellersList = () => {
                                 </tr>
                             )) : sellers.map((seller) => (
                                 <tr key={ seller._id } className="orders-row">
+                                    <td>{serialNumber++}</td>
                                     <td>{ seller.username }</td>
                                     <td>{ seller.email }</td>
                                     <td>{ seller.companyName }</td>

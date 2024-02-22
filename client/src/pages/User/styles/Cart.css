@@ -8,23 +8,30 @@
 .cart-table {
     width: 50%;
     margin-top: 20px;
+    border: none;
 }
 .cart-head-title{
-    margin-left: 6rem;
-    font-size: 1.7rem;
+    margin-top: 3rem;
+    margin-left: 7.5rem;
+    font-size: 1.65rem;
+    
 }
 
 .cart-table th,
 .cart-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
+    padding: 20px;
     text-align: center;
 }
 
-.cart-table th {
-    background-color: #f2f2f2;
+.cart-table thead{
+    /* background-color: #5f9ea0; */
 }
-
+.cart-table th {
+    color: #c97d20;
+    font-size: 1.3rem;
+    border-radius: none !important;
+    /* background-color: #5f9ea0; */
+}
 
 .cart-table .cart-title{
     width: 35%;
@@ -73,4 +80,13 @@
 
 .checkout-button:hover {
     background-color: #3498db;
+}
+
+.myorders-container{
+    margin-left: 9rem;
+}
+
+.nullmessage{
+    font-size: 1rem;
+    margin-left: 1.5rem;
 }

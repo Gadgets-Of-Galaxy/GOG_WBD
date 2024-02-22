@@ -1,13 +1,39 @@
-import React from 'react'
-import Chart from 'react-apexcharts';
+import React from "react";
+import Chart from "react-apexcharts";
 import "../styles/CustomerReviews.css";
 
-export const CustomerReview = () => {
+export const CustomerReview = ({ sellerReviews }) => {
+
+  const currentTime = new Date();
+
+  const lastTwentyFourHoursTimestamps = [];
+
+  for (let i = 24; i >= 0; i -= 4) {
+    const hourStart = new Date(currentTime);
+    hourStart.setHours(currentTime.getHours() - i, 0, 0, 0);
+    const isoString = hourStart.toISOString();
+    lastTwentyFourHoursTimestamps.push(isoString);
+  }
+  
+  const reviewCounts = Array.from({ length: 6 }).fill(0);
+
+  for (let i = 0; i < 6; i++) {
+    const hourStart = new Date(lastTwentyFourHoursTimestamps[i]);
+    const hourEnd = new Date(hourStart);
+    hourEnd.setHours(hourEnd.getHours() + 4); 
+    const reviewsInInterval = sellerReviews.filter((review) => {
+      const reviewTime = new Date(review.createdAt);
+      return reviewTime >= hourStart && reviewTime < hourEnd;
+    });
+  
+    reviewCounts[i] = reviewsInInterval.length;
+  }
+
   const data = {
     series: [
       {
-        name: "Review",
-        data: [10, 50, 30, 90, 40, 120, 100],
+        name: "Review Count",
+        data: reviewCounts,
       },
     ],
     options: {
@@ -15,7 +41,6 @@ export const CustomerReview = () => {
         type: "area",
         height: "auto",
       },
-
       fill: {
         colors: ["#cf7608"],
         type: "gradient",
@@ -37,26 +62,21 @@ export const CustomerReview = () => {
       },
       xaxis: {
         type: "datetime",
-        categories: [
-          "2018-09-19T00:00:00.000Z",
-          "2018-09-19T01:30:00.000Z",
-          "2018-09-19T02:30:00.000Z",
-          "2018-09-19T03:30:00.000Z",
-          "2018-09-19T04:30:00.000Z",
-          "2018-09-19T05:30:00.000Z",
-          "2018-09-19T06:30:00.000Z",
-        ],
+        categories: lastTwentyFourHoursTimestamps
       },
       yaxis: {
-        show: false
+        show: false,
       },
-      toolbar:{
-        show: false
-      }
+      toolbar: {
+        show: false,
+      },
     },
   };
-  return <div className="CustomerReview">
-        <Chart options={data.options} series={data.series} type="area" />
-  </div>;
-};
 
+
+  return (
+    <div className="CustomerReview">
+      <Chart options={data.options} series={data.series} type="area" />
+    </div>
+  );
+};

@@ -179,6 +179,9 @@ table,
     width: 60px;
 }
 
+.log_out{
+    padding-left: 1rem;
+}
 .seller-sidebar .logo-details {
     height: 80px;
     display: flex;
@@ -285,8 +288,6 @@ table,
     flex-direction: row;
 }
 
-
-
 .home-section nav .seller-sidebar-button {
     display: flex;
     align-items: center;
@@ -342,6 +343,9 @@ nav .search-box .bx-search {
     font-size: 1.8rem;
     font-weight: 700;
     color: #7c899a;
+}
+.sellerrating{
+    font-size: 1em;
 }
 .home-content{
     margin-top: 2rem;

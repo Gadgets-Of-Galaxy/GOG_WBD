@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "../styles/Header.css";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import { Search } from "./Search";
@@ -23,67 +23,60 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export const Header = ({ user, onFilteredProducts }) => {
+  const [products, setProducts] = useState([]);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/user/products');
+        setProducts(response.data.products);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+    fetchProducts();
+  }, []);
+
   const categories = [
     {
       category: "Mobiles",
-      types: ["iPhone", "FeaturePhone", "AndroidPhone", "Tablets"],
       icon: faMobile,
     },
     {
       category: "Laptops",
-      types: ["MacOs", "Windows", "Gaming", "Linux"],
       icon: faLaptop,
     },
     {
       category: "Wearables",
-      types: ["FitnessTracker", "SmartWatch", "HybridSmartWatch"],
       icon: faLifeRing,
     },
     {
-      category: "Tech Accessories",
-      types: [
-        "Mobile-Chargers",
-        "StorageDevices",
-        "ScreenProtectors",
-        "Cases/Covers",
-        "PowerBanks",
-      ],
-      icon: faMicrochip,
-    },
-    {
       category: "Audio Store",
-      types: [
-        "Headphones",
-        "EarBuds",
-        "Wired Earphones",
-        "NeckBands",
-        "HeadSets",
-        "Speakers",
-        "Bluetooth Speakers",
-        "SoundBars",
-        "HomeTheatre System",
-      ],
       icon: faHeadphones,
     },
     {
-      category: "Smart Gadgets",
-      types: [
-        "Smart Locks and Safes",
-        "Security Camera",
-        "Smart Plugs",
-        "Torches",
-        "Extension Boards",
-      ],
-      icon: faStar,
+      category: "Speakers",
+      icon: faMicrochip,
     },
     {
+      category: "Smart Gadgets",
+      icon: faStar,
+    },
+    // {
+    //   category: "Health Gadgets",
+    //   icon: faFirstAid,
+    // },
+    // {
+    //   category: "Personal Care",
+    //   icon: faMale,
+    // },
+  ];
+  const categoriess = [
+    {
       category: "Health Gadgets",
-      types: ["HairDryers", "Trimmers", "OralCare", "HairStylers", "Epilators"],
       icon: faFirstAid,
     },
     {
       category: "Personal Care",
-      types: ["HairDryers", "Trimmers", "OralCare", "HairStylers", "Epilators"],
       icon: faMale,
     },
   ];
@@ -106,25 +99,43 @@ export const Header = ({ user, onFilteredProducts }) => {
 
   const handleSearch = async (query) => {
     try {
-      const response = await axios.get("http://localhost:5000/api/products");
+      const response = await axios.get("http://localhost:5000/api/user/products");
       const allProducts = response.data.products;
       const filteredProducts = allProducts.filter((product) =>
         product.title.toLowerCase().includes(query.toLowerCase())
       );
       // console.log(filteredProducts);
       onFilteredProducts(filteredProducts);
-      navigate("/category", { state: { sortedProducts: filteredProducts } });
+      navigate("/category");
     } catch (error) {
       console.error("Error fetching products:", error);
     }
   };
+
+  async function handlecategoryProducts(event) {
+    const categoryTitle = event.currentTarget.querySelector('.category-list .category-left').textContent.trim();
+    try {
+      const response = await axios.get(`http://localhost:5000/api/user/products/category/${encodeURIComponent(categoryTitle)}`);
+      // console.log(response.data);
+      if (response.status === 200) {
+        const products = await response.data;
+        console.log(`Products in category '${categoryTitle}':`, products);
+        onFilteredProducts(products);
+        navigate("/category");
+      } else {
+        throw new Error(`Failed to fetch products for category '${categoryTitle}'`);
+      }
+    } catch (error) {
+      console.error("Error handling category products:", error);
+    }
+  }
 
   return (
     <div className="header">
       <div className="header-top">
         <div className="header-top-left">
           <div className="header-title">
-            <h1>GOG</h1>
+            <Link to="/"><h1>GOG</h1></Link>
           </div>
           <div className="header-list">
             <ul>
@@ -132,34 +143,26 @@ export const Header = ({ user, onFilteredProducts }) => {
                 <Link to="/">Home</Link>
               </li>
               <li>
-                <Link to="/">Shop</Link>
-              </li>
-              <li>
                 <Link to="/">Gadgets</Link>
               </li>
-              <li>{!user && <Link to="/login">Login</Link>}</li>
-              {/* <li>
-                <Link to="/seller">Seller</Link>
-              </li>
-              <li>
-                <Link to="/admin">Admin</Link>
-              </li> */}
+              <li>{ !user && <Link to="/login">Login</Link> }</li>
             </ul>
           </div>
         </div>
         <div className="header-right">
-          {user && (
+          <Link to="/sellerRegister">Become a seller</Link>
+          { user && (
             <Link to="/myAccount">
               <p>My Account</p>
             </Link>
-          )}
+          ) }
           <Link to="/wishlist">
-            <FontAwesomeIcon className="header-right-icon" icon={faHeart} />
+            <FontAwesomeIcon className="header-right-icon" icon={ faHeart } />
           </Link>
           <Link to="/cart">
             <FontAwesomeIcon
               className="header-right-icon"
-              icon={faCartShopping}
+              icon={ faCartShopping }
             />
           </Link>
         </div>
@@ -172,54 +175,67 @@ export const Header = ({ user, onFilteredProducts }) => {
                 <div className="dpt-head-top">
                   <div className="main-text">All Departments</div>
                   <div className="mini-text mobile-hide">
-                    Total 1234 Products
+                    Total { products.length } Products
                   </div>
                 </div>
                 <a
                   href="#"
                   className="dpt-trigger mobile-hide"
-                  onClick={toggleMenu}
+                  onClick={ toggleMenu }
                 >
-                  {!isMenuOpen && (
-                    <FontAwesomeIcon className="header-bars" icon={faBars} />
-                  )}
-                  {isMenuOpen && (
-                    <FontAwesomeIcon className="header-bars" icon={faXmark} />
-                  )}
+                  { !isMenuOpen && (
+                    <FontAwesomeIcon className="header-bars" icon={ faBars } />
+                  ) }
+                  { isMenuOpen && (
+                    <FontAwesomeIcon className="header-bars" icon={ faXmark } />
+                  ) }
                 </a>
               </div>
 
               <div className="categories">
-                {isMenuOpen &&
+                { isMenuOpen &&
                   categories.map((category, index) => (
-                    <div key={index} className="category has-child">
-                      <a href="#">
+                    <div key={ index } className="category has-child">
+                      <button className="category-button" onClick={ handlecategoryProducts }>
                         <div className="category-list">
                           <div className="category-left">
                             <FontAwesomeIcon
                               className="category-icon"
-                              icon={category.icon}
+                              icon={ category.icon }
                             />
-                            {category.category}
+                            { category.category }
                           </div>
                           <div className="category-right">
-                            <FontAwesomeIcon icon={faAngleRight} />
+                            <FontAwesomeIcon icon={ faAngleRight } />
                           </div>
                         </div>
-                      </a>
-                      <ul>
-                        {category.types.map((type, typeIndex) => (
-                          <li key={typeIndex}>
-                            <a href={`/${type.toLowerCase()}`}>{type}</a>
-                          </li>
-                        ))}
-                      </ul>
+                      </button>
                     </div>
-                  ))}
+                  )) }
+                  { isMenuOpen &&
+                  categoriess.map((category, index) => (
+                    <div key={ index } className="category has-child">
+                      <button className="category-button" >
+                        <div className="category-list">
+                          <div className="category-left">
+                            <FontAwesomeIcon
+                              className="category-icon"
+                              icon={ category.icon }
+                            />
+                            { category.category }
+                          </div>
+                          <div className="category-right">
+                            <FontAwesomeIcon icon={ faAngleRight } />
+                          </div>
+                        </div>
+                      </button>
+                    </div>
+                    
+                  )) }
               </div>
             </div>
           </div>
-          <Search handleSearch={handleSearch} />
+          <Search handleSearch={ handleSearch } />
         </div>
       </div>
     </div>

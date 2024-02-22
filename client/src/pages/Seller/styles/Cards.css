@@ -10,6 +10,7 @@
     flex-direction: row;
 }
 
+
 @media screen and (max-width: 1200px) {
    .Cards{
     flex-direction: column;

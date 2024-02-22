@@ -1,18 +1,16 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { Header } from "../../CommonComponents/components/Header";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export const CartComponent = ({ user }) => {
     const [cartItems, setCartItems] = useState([]);
     const [subtotal, setSubtotal] = useState(0);
     const [totalQuantity, setTotalQuantity] = useState(0);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchCartItems = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/carts/${user._id}`);
+                const response = await axios.get(`http://localhost:5000/api/user/carts/${user._id}`);
                 setCartItems(response.data.cartItems || []);
                 calculateSubtotal(response.data.cartItems || []);
             } catch (error) {
@@ -25,6 +23,16 @@ export const CartComponent = ({ user }) => {
         }
     }, [user]);
 
+    const deleteFromCart = async (cartItemId) => {
+        try {
+            const response = await axios.delete(`http://localhost:5000/api/user/carts/${user._id}/deleteItem/${cartItemId}`);
+            // window.alert(response.data.message);
+            setCartItems(cartItems.filter(cartItem => cartItem._id !== cartItemId));
+        } catch (error) {
+            console.error('Error deleting Cart Item:', error);
+        }
+    };
+
     const calculateSubtotal = (items) => {
         const total = items.reduce((acc, item) => {
             const itemTotal = item.price * item.qty;
@@ -33,34 +41,6 @@ export const CartComponent = ({ user }) => {
         setSubtotal(total);
         const totalQty = items.reduce((acc, item) => acc + item.qty, 0);
         setTotalQuantity(totalQty);
-    };
-
-    const handleCheckout = async () => {
-        try {
-            const checkoutData = {
-                totalQty: totalQuantity,
-                totalCost: subtotal,
-                items: cartItems.map(item => ({
-                    _id: item._id,
-                    qty: item.qty,
-                    price: item.price,
-                    productId: item.productId,
-                    title: item.title,
-                    imagePath: item.imagePath,
-                    productCode: item.productCode
-                })),
-                user: user._id
-            };
-            const response = await axios.post('http://localhost:5000/api/checkout', checkoutData);
-            console.log('Checkout successful!', response.data);
-            setCartItems([]);
-            setSubtotal(0);
-            setTotalQuantity(0);
-            navigate('/checkout');
-
-        } catch (error) {
-            console.error('Error during checkout:', error);
-        }
     };
 
     return (
@@ -80,6 +60,7 @@ export const CartComponent = ({ user }) => {
                                 <th className="cart-title-column">Title</th>
                                 <th className="cart-price-column">Price</th>
                                 <th className="cart-qty-column">Quantity</th>
+                                <th className="cart-qty-column">Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -91,6 +72,9 @@ export const CartComponent = ({ user }) => {
                                     <td className="cart-title">{ item.title }</td>
                                     <td className="cart-price">Rs.{ item.price }</td>
                                     <td className="cart-qty">{ item.qty }</td>
+                                    <td>
+                                        <button className="delete-button" onClick={ () => deleteFromCart(item._id) }>Delete</button>
+                                    </td>
                                 </tr>
                             )) }
                         </tbody>
@@ -100,7 +84,7 @@ export const CartComponent = ({ user }) => {
                             <p className="subtotal">Subtotal: Rs.{ subtotal }</p>
                             <p className="total-quantity">Total Quantity: { totalQuantity }</p>
                         </div>
-                        <button className="checkout-button" onClick={ handleCheckout }>Checkout</button>
+                        <Link to="/checkout"><button className="checkout-button" >Checkout</button></Link>
                     </div>
                 </>
             ) }

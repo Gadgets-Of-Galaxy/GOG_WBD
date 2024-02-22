@@ -1,4 +1,8 @@
 /* Card Wrapper */
+
+.product-topdiv{
+    margin-bottom: -5rem;
+}
 .crd-wrpr {
     margin-top: -70px !important;
     margin: 80px;
@@ -7,16 +11,31 @@
 /* Main Card Styles */
 .crd {
     display: flex;
+    flex-direction: row;
+    gap: 2rem;
     border-radius: 8px;
     overflow: hidden;
 }
 
 /* Product Images Section */
 .prd-imgs {
-    flex: 1;
+    width: 100vw;
+    height: 100vh;
+    margin-top: 2rem;
     padding: 20px;
     display: flex;
     flex-direction: column;
+}
+.prd-rem{
+    margin-top: 5rem;
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh;
+    overflow-y: auto;
+}
+.prd-rem::-webkit-scrollbar{
+    display: none;
 }
 
 /* Display Image Section */
@@ -86,7 +105,7 @@
 
 /* Other Product Details */
 .prd-ctnt {
-    margin-top: 4rem;
+    width: 40vw;
     flex: 1;
     padding: 20px;
 }
@@ -96,6 +115,7 @@
     text-transform: capitalize;
     font-weight: 700;
     margin: 1rem 0;
+    margin-top: 0;
 }
 
 .prd-rating {
@@ -153,7 +173,6 @@
 
 /* Additional Styling for Buttons and Social Links */
 .pchs-info {
-    margin-top: 20px;
     display: flex;
     flex-direction: row;
     gap: 1em;
@@ -194,33 +213,7 @@
     color: #333;
 }
 
-/* Reviews Section */
-.reviews-section {
-    margin-top: 40px;
-}
 
-.review {
-    border: 1px solid #ddd;
-    padding: 10px;
-    margin-bottom: 10px;
-}
-
-.user {
-    font-weight: bold;
-}
-
-.comment {
-    margin-top: 5px;
-}
-
-.rating {
-    margin-top: 5px;
-    color: #ffc107;
-}
-
-/* Add the following styles to your existing ProductDetailsPage.css file */
-
-/* Share Button Dropdown Content */
 .share-dropdown-content {
     display: flex;
     flex-direction: row;
@@ -276,92 +269,138 @@
 .sharre-btn:hover {
     color: #555;
 }
-
 /* Review Section */
 .review-section {
-    margin-top: 20px;
+    margin-top: 1rem;
     animation: fadeInUp 0.5s ease;
     color: #333;
-    /* Set text color */
+    margin-bottom: 3rem;
+}
+.previous-reviews{
+    width: 85%;
+    margin-left: 1rem;
 }
 
-.previous-reviews {
-    margin-bottom: 20px;
+.reviewer{
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.reviewer-name{
+    display: flex;
+    flex-direction: row;
+    align-items:baseline;
+    gap: 0.5rem;
+    font-weight: 800;
+}
+
+#rating, #title{
+    margin: 0;
+}
+
+.reviewer-rating{
+    padding: 0;
+    margin-top: 0;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.rating-stars-review{
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    color: #ffc725;
+    font-size: 20px;
+}
+
+.review-section h2{
+    margin-left: 0.5rem;
+    margin-bottom: 0rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #c97d20;
+}
+.user-review{
+    margin-top: 3rem;
+    margin-left: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+.user-review button{
+    color:white;
+    font-size: 1rem;
+    border:none;
+    border-radius: 5px;
+    background-color: #5f9ea0;
+    height: 6vh;
+    width: 12vw;
+    margin-bottom: 2rem;
+    cursor: pointer;
 }
 
 .review {
-    border: 1px solid #ccc;
-    padding: 10px;
-    margin-bottom: 10px;
-    animation: fadeIn 0.5s ease;
-    background: linear-gradient(to bottom, #ffffff 0%, #f9f9f9 100%);
-    /* Gradient background color */
-    transition: all 0.3s ease;
-    /* Smooth transition for hover effect */
+    padding-left: 15px;
+    padding-top: 10px;
 }
-
-.review:hover {
-    transform: translateY(-2px);
-    /* Move up slightly on hover */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    /* Add shadow on hover */
-}
-
-.review p {
-    margin: 5px 0;
-}
-
-.review strong {
-    font-weight: bold;
-}
-
 .review-form {
-    margin-top: 20px;
-    animation: fadeIn 0.5s ease;
+    margin-top: 3rem;
+    margin-left: 2rem;
+    margin-bottom: 2rem;
 }
 
-/* Write a Review Section */
 .write-review-section {
     margin-top: 20px;
 }
 
 .rating-input label {
     margin-right: 10px;
+    margin-bottom: 1rem;
+    font-weight: 800;
 }
 
-.rating-input input[type="number"] {
-    width: 50px;
-    padding: 5px;
+.review-title-input, .review-text-input{
+    display: flex;
+    flex-direction: column;
+    gap:0.5rem;
+}
+.review-title-input input{
+    width: 30vw;
+    height:5vh;
+    font-size: 1rem;
     border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 16px;
+    padding-left: 1rem;
+    border:1px solid grey;
+    margin-bottom: 1rem;
 }
 
 .review-text-input textarea {
-    width: 100%;
+    width: 30vw;
     height: 100px;
-    padding: 5px;
-    margin-top: 10px;
+    padding: 8px;
+    font-size: 1rem;
     border-radius: 5px;
     border: 1px solid #ccc;
     font-size: 16px;
 }
 
+
 .submit-review-btn {
+    margin-top: 1rem;
+    margin-left: 9rem;
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #c97d20;
     color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    transition: background-color 0.3s ease;
+
 }
 
 .submit-review-btn:hover {
-    background-color: #0056b3;
+    background-color: #5f9ea0;
 }
-
 
 @keyframes fadeIn {
     from {
@@ -375,7 +414,18 @@
     }
 }
 
-/* Popup Container */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .popup-container {
     display: none;
     position: fixed;
@@ -387,7 +437,7 @@
     padding: 20px;
 }
 
-/* Popup Content */
+
 .popup-content {
     position: relative;
     background-color: #fff;

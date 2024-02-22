@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import axios from "axios";
-import "../styles/login.css";   
+import "../styles/login.css";
 
 export const Login = ({ setLoginUser }) => {
     const navigate = useNavigate();
@@ -12,6 +12,17 @@ export const Login = ({ setLoginUser }) => {
         password: "",
         confirmPassword: ""
     });
+
+
+    useEffect(() => {
+        const getCSRFToken = async () => {
+            const response = await axios.get('http://localhost:5000/api/getCSRFToken');
+            axios.defaults.headers.post['X-CSRF-Token'] = response.data.CSRFToken;
+            // console.log(response.data.CSRFToken);
+        };
+        getCSRFToken();
+    }, []);
+
 
     const toggleForm = () => {
         setIsSignUp(!isSignUp);
@@ -37,7 +48,7 @@ export const Login = ({ setLoginUser }) => {
                     formData.isUser = true;
                 }
 
-                const response = await axios.post(`http://localhost:5000/api${endpoint}`, formData);
+                const response = await axios.post(`http://localhost:5000/api/user${endpoint}`, formData);
 
                 if (response.status === 200) {
                     const { user, token, isUser, isAdmin } = response.data;
@@ -108,15 +119,15 @@ export const Login = ({ setLoginUser }) => {
         <div>
             <section className="login-section">
                 <div className="container">
-                    <div className={`user ${isSignUp ? "signupBx" : "signinBx"}`}>
+                    <div className={ `user ${isSignUp ? "signupBx" : "signinBx"}` }>
                         <div className="formBx">
                             <form
                                 name="validatelogin"
-                                onSubmit={formvalidate}
+                                onSubmit={ formvalidate }
                             >
-                                <h2>{isSignUp ? "Sign Up" : "Log in"}</h2><br></br>
+                                <h2>{ isSignUp ? "Sign Up" : "Log in" }</h2><br></br>
 
-                                {isSignUp && (
+                                { isSignUp && (
                                     <div>
                                         <label htmlFor="name">Name</label>
                                         <input
@@ -124,13 +135,13 @@ export const Login = ({ setLoginUser }) => {
                                             id="name"
                                             name="name"
                                             placeholder="Username"
-                                            value={formData.name}
-                                            onChange={handleChange}
-                                            onBlur={validateName}
+                                            value={ formData.name }
+                                            onChange={ handleChange }
+                                            onBlur={ validateName }
                                         />
                                         <br />
                                     </div>
-                                )}
+                                ) }
                                 <label htmlFor="email">
                                     Email
                                 </label>
@@ -139,9 +150,9 @@ export const Login = ({ setLoginUser }) => {
                                     id="email"
                                     name="email"
                                     placeholder="Email"
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    onBlur={validateEmail}
+                                    value={ formData.email }
+                                    onChange={ handleChange }
+                                    onBlur={ validateEmail }
                                 />
                                 <br />
                                 <label htmlFor="password">
@@ -152,12 +163,12 @@ export const Login = ({ setLoginUser }) => {
                                     id="password"
                                     name="password"
                                     placeholder="Password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    onBlur={validatePassword}
+                                    value={ formData.password }
+                                    onChange={ handleChange }
+                                    onBlur={ validatePassword }
                                 />
                                 <br />
-                                {isSignUp && (
+                                { isSignUp && (
                                     <div>
                                         <label htmlFor="confirmPassword">
                                             Confirm password
@@ -167,24 +178,24 @@ export const Login = ({ setLoginUser }) => {
                                             id="confirmPassword"
                                             name="confirmPassword"
                                             placeholder="Confirm Password"
-                                            value={formData.confirmPassword}
-                                            onChange={handleChange}
-                                            onBlur={validateConfirmPassword}
+                                            value={ formData.confirmPassword }
+                                            onChange={ handleChange }
+                                            onBlur={ validateConfirmPassword }
                                         />
                                         <br />
                                     </div>
-                                )}
+                                ) }
                                 <input
                                     type="submit"
                                     value="Submit"
                                     className="button"
                                 />
                                 <p className="signup">
-                                    {isSignUp
+                                    { isSignUp
                                         ? "Already have an account?"
-                                        : "Don't have an account?"}
-                                    <a onClick={toggleForm}>
-                                        {isSignUp ? " Login" : " Sign Up"}
+                                        : "Don't have an account?" }
+                                    <a onClick={ toggleForm }>
+                                        { isSignUp ? " Login" : " Sign Up" }
                                     </a>
                                 </p>
                             </form>

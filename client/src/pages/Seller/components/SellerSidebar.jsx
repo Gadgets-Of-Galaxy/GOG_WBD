@@ -51,7 +51,6 @@ export const SellerSidebar = ({ activeLink, toggleSidebar, achieve }) => {
                 </li>
                 <li className="log_out">
                     <a href="/" onClick={handleLogout}>
-                        <FontAwesomeIcon className="header-right-icon" icon={ faXmark } />
                         <span className="links_name">Log out</span>
                     </a>
                 </li>

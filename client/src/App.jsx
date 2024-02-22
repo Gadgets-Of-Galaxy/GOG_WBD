@@ -1,44 +1,47 @@
 import { useState, useEffect } from 'react'
-// import {useLocation} from 'react-router-dom';
+import axios from "axios";
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
-// import { Login } from './pages/Login_SignUp/components/Login'
+import { Header } from './pages/CommonComponents/components/Header';
 import { Home } from './pages/Home/Home';
-import { MyAccount } from './pages/Home/components/MyAccount';
+import { CheckoutPage } from './pages/User/components/CheckoutPage';
+import { Aboutus } from './pages/Home/components/Aboutus';
+import { Contactus } from './pages/Home/components/Contactus';
+import ProductDetailsPage from './pages/Home/components/ProductDetailsPage';
+import { Category } from './pages/Home/components/Category';
+
+import { MyAccount } from './pages/User/components/MyAccount';
+import { EditProfile } from './pages/User/components/EditProfile';
+import { MyWishlists } from './pages/User/components/MyWishlists';
+import { MyCart } from './pages/User/components/MyCart';
+import { MyOrders } from './pages/User/components/MyOrders';
+
+import { Login } from './pages/Login_SignUp/components/Login';
+import { SellerLogin } from './pages/Login_SignUp/components/SellerLogin';
+import SellerRegister from './pages/Login_SignUp/components/SellerRegister';
+
 import { AdminDashboard } from './pages/Admin/components/AdminDashboard';
 import { AdminMessages } from './pages/Admin/components/AdminMessages';
 import { Products } from './pages/Admin/components/Products';
 import { Users } from './pages/Admin/components/Users';
 import { OrdersList } from './pages/Admin/components/OrdersList';
-import { Category } from './pages/Home/components/Category';
-import { EditProfile } from './pages/Home/components/EditProfile';
-import { MyWishlists } from './pages/Home/components/MyWishlists';
-import { MyCart } from './pages/Home/components/MyCart';
-import { MyOrders } from './pages/Home/components/MyOrders';
-import { CheckoutPage } from './pages/Home/components/CheckoutPage';
-import { Aboutus } from './pages/Home/components/Aboutus';
-import { Contactus } from './pages/Home/components/Contactus';
-import { Login } from './pages/Login_SignUp/components/Login';
-import { SellerLogin } from './pages/Login_SignUp/components/SellerLogin';
-import ProductDetailsPage from './pages/Home/components/ProductDetailsPage';
 
 import { SellerDashboard } from './pages/Seller/components/SellerDashboard';
 import { SellerAddProduct } from './pages/Seller/components/SellerAddProduct';
-import { Header } from './pages/CommonComponents/components/Header';
-
-import axios from "axios";
 import { SellersList } from './pages/Admin/components/SellersList';
-import SellerRegister from './pages/Login_SignUp/components/SellerRegister';
 import { SellerProducts } from './pages/Seller/components/SellerProducts';
+import { SellerOrdersList } from './pages/Seller/components/SellerOrdersList';
+import { SellerReviews } from './pages/Seller/components/SellerReviews';
+import { PageNotFound } from './pages/CommonComponents/components/PageNotFound';
 
 function App() {
-  const [user, setUser] = useState(null);
-  const [products, setProducts] = useState(null);
-  const [users, setUsers] = useState(null);
-  const [sellers, setSellers] = useState(null);
-  const [categories, setCategories] = useState(null);
-  const [orders, setOrders] = useState(null);
-  const [messages, setMessages] = useState(null);
+  const [user, setUser] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [sellers, setSellers] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [messages, setMessages] = useState([]);
   const storedUser = JSON.parse(localStorage.getItem('loggedInUser'));
   const [loginuser, setLoginUser] = useState(storedUser || null);
   
@@ -62,14 +65,13 @@ function App() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/users/' + loginuser._id);
+        const response = await axios.get('http://localhost:5000/api/user/users/' + loginuser._id);
         setUser(response.data);
         // console.log(user);
       } catch (error) {
         console.error('Error fetching user:', error);
       }
     };
-
     if (loginuser) {
       fetchUser();
     }
@@ -78,7 +80,7 @@ function App() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/users/');
+        const response = await axios.get('http://localhost:5000/api/user/users');
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -90,7 +92,7 @@ function App() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/products/');
+        const response = await axios.get('http://localhost:5000/api/user/products');
         setProducts(response.data.products);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -102,7 +104,7 @@ function App() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/categories');
+        const response = await axios.get('http://localhost:5000/api/user/categories');
         setCategories(response.data.categories);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -114,7 +116,7 @@ function App() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/admin/orders/');
+        const response = await axios.get('http://localhost:5000/api/admin/orders');
         setOrders(response.data);
       } catch (error) {
         console.error('Error fetching Orders:', error);
@@ -126,7 +128,7 @@ function App() {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/admin/messages/');
+        const response = await axios.get('http://localhost:5000/api/admin/messages');
         setMessages(response.data);
       } catch (error) {
         console.error('Error fetching admin messages:', error);
@@ -138,7 +140,7 @@ function App() {
   useEffect(() => {
     const fetchSellers = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/sellers/');
+        const response = await axios.get('http://localhost:5000/api/seller');
         setSellers(response.data.sellers);
       } catch (error) {
         console.error('Error fetching Sellers:', error);
@@ -149,7 +151,6 @@ function App() {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-
     if (token) {
       axios.defaults.headers.common['Authorization'] = token;
     }
@@ -159,15 +160,28 @@ function App() {
     const fetchUser = async () => {
       try {
         if (loginuser) {
-          const response = await axios.get(`http://localhost:5000/api/users/${loginuser._id}`);
+          const response = await axios.get(`http://localhost:5000/api/user/users/${loginuser._id}`);
           setLoginUser(response.data);
         }
       } catch (error) {
         console.error('Error fetching user:', error);
       }
     };
-
     fetchUser();
+  }, []);
+
+  useEffect(() => {
+    const fetchSeller = async () => {
+      try {
+        if (loginSeller) {
+          const response = await axios.get(`http://localhost:5000/api/seller/sellers/${loginSeller._id}`);
+          setLoginSeller(response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching seller:', error);
+      }
+    };
+    fetchSeller();
   }, []);
 
   const [sortedProducts, setSortedProducts] = useState([]);
@@ -178,15 +192,16 @@ function App() {
 
   // console.log(loginSeller);
   // console.log(loginuser);
+  // console.log(products);
 
   return (
     <Router>
       <div>
         <Routes>
-          <Route path="/" element={ <><Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } /><Home loginuser={ user } /></> } />
+          <Route path="/" element={ <><Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } /><Home user={ loginuser } /></> } />
           <Route path="/login" element={ <Login setLoginUser={ setLoginUser } /> } />
           <Route path="/product/:productId" element={ <><Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } /><ProductDetailsPage user={ loginuser } /></> } />
-          <Route path="/category" element={ <><Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } /><Category categories={ categories } user={ loginuser } products={ products } sortedProducts={ sortedProducts } /></> } />
+          <Route path="/category" element={ <><Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } /><Category sortedProducts={ sortedProducts } /></> } />
           <Route path='/Aboutus' element={ <Aboutus user={ loginuser } /> } />
           <Route path='/Contactus' element={ <Contactus user={ loginuser } /> } />
           <Route path="/myAccount" element={ loginuser?.isUser? <MyAccount /> : <Navigate to="/login" /> } />
@@ -194,7 +209,7 @@ function App() {
           <Route path="/editProfile" element={ loginuser?.isUser? <EditProfile user={ loginuser } /> : <Navigate to="/login" /> } />
           <Route path='/wishlist' element={ loginuser?.isUser?  <MyWishlists user={ loginuser } /> : <Navigate to="/login" /> } />
           <Route path='/cart' element={ loginuser?.isUser?  <><Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } /><MyCart user={ loginuser } /></> : <Navigate to="/login" /> } />
-          <Route path='/myOrders' element={ loginuser?.isUser?  <><Header user={ loginuser } onFilteredProducts={ handleSearchedProducts } /><MyOrders user={ loginuser } /></> : <Navigate to="/login" /> } />
+          <Route path='/myOrders' element={ loginuser?.isUser?  <MyOrders user={ loginuser } /> : <Navigate to="/login" /> } />
           <Route path='/checkout' element={ loginuser?.isUser?  <CheckoutPage user={ loginuser } /> : <Navigate to="/login" /> } />
 
           <Route path='/admin' element={ loginuser?.isAdmin ? <AdminDashboard /> : <Navigate to="/login" /> } />
@@ -202,13 +217,18 @@ function App() {
           <Route path='/admin/userDetails' element={ loginuser?.isAdmin ? <Users users={ users }/> : <Navigate to="/login" /> } />
           <Route path='/admin/ordersList' element={ loginuser?.isAdmin ? <OrdersList orders={ orders } /> : <Navigate to="/login" /> } />
           <Route path='/admin/messages' element={ loginuser?.isAdmin ? <AdminMessages messages={ messages } /> : <Navigate to="/login" /> } />
-          <Route path='/admin/sellersList' element={ loginuser?.isAdmin ? <SellersList sellers={ sellers } /> : <Navigate to="/login" /> } />
+          <Route path='/admin/sellersList' element={ loginuser?.isAdmin ? <SellersList/> : <Navigate to="/login" /> } />
 
           <Route path="/sellerLogin" element={ <SellerLogin setLoginSeller={setLoginSeller}/> } />
           <Route path="/sellerRegister" element={ <SellerRegister /> } />
-          <Route path='/seller' element={ loginSeller?.approved ?<SellerDashboard /> : <Navigate to="/sellerLogin" /> } />
+          <Route path='/seller' element={ loginSeller?.approved ?<SellerDashboard seller={loginSeller}/> : <Navigate to="/sellerLogin" /> } />
           <Route path='/seller/addproduct' element={ loginSeller?.approved ?<SellerAddProduct seller={loginSeller}/> : <Navigate to="/sellerLogin" /> } />
-          <Route path="/seller/products" element={ loginSeller?.approved ?<SellerProducts/> : <Navigate to="/sellerLogin" /> } />
+          <Route path="/seller/products" element={ loginSeller?.approved ?<SellerProducts seller={loginSeller}/> : <Navigate to="/sellerLogin" /> } />
+          <Route path="/seller/ordersList" element={ loginSeller?.approved ?<SellerOrdersList seller={loginSeller}/> : <Navigate to="/sellerLogin" /> } />
+          <Route path="/seller/reviews" element={ loginSeller?.approved ?<SellerReviews seller={loginSeller}/> : <Navigate to="/sellerLogin" /> } />
+
+          
+          <Route path="*" element={ <PageNotFound /> } />
         </Routes>
       </div>
     </Router>

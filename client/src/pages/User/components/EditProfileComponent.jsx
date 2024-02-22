@@ -32,7 +32,7 @@ export const EditProfileComponent = ({ user }) => {
         e.preventDefault();
 
         try {
-            const response = await axios.post(`http://localhost:5000/api/editprofile/${user._id}`, userInput);
+            const response = await axios.post(`http://localhost:5000/api/user/editprofile/${user._id}`, userInput);
             console.log(response.data);
             navigate('/myAccount');
         } catch (error) {
@@ -42,20 +42,9 @@ export const EditProfileComponent = ({ user }) => {
     return (
         <div>
             <section className="home-section">
-                <nav>
-                    <div className="sidebar-button">
-                        <i className='bx bx-menu sidebarBtn'></i>
-                        <span className="dashboard">My Profile</span>
-                    </div>
-                    <div className="search-box">
-                        <input type="text" placeholder="Search..." />
-                        <i className='bx bx-search'></i>
-                    </div>
-                </nav>
-
                 <div className="uprofilepage">
-                    <h3 className="font-weight-bold">EDIT PROFILE</h3>
-                    <hr />
+                    <h3 className="font-weight-bold userhead">EDIT PROFILE</h3>
+                    <hr className="userhead-hr"/>
                     <form className='edit-profile-form' onSubmit={ handleSubmit }>
                         <div className="mb-3">
                             <label htmlFor="profileInputFullname" className="form-label">Full Name</label>

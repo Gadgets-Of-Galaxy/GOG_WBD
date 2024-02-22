@@ -6,6 +6,11 @@
     
 }
 
+.category-button{
+    background-color: white;
+    border: none;
+}
+
 .header-search-container{
     background-color: #5f9ea0;
     height: 12vh;
@@ -201,6 +206,7 @@
     flex-direction: row;
     gap: 5em;
     border-bottom: 1px solid #c9c9c9;
+    cursor: pointer;;
 }
 .category ul{
     display: none;

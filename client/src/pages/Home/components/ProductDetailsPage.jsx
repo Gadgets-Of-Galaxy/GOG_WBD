@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -9,6 +9,7 @@ import {
     faHeart,
     faShare,
     faEnvelope,
+    faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { faStar as regularStar } from "@fortawesome/free-regular-svg-icons";
 import {
@@ -17,26 +18,22 @@ import {
     faTwitter,
     faWhatsapp,
 } from "@fortawesome/free-brands-svg-icons";
-import { Header } from "../../CommonComponents/components/Header";
 import "../styles/ProductDetailsPage.css";
 
 function openPopup() {
-    const popupContainer = document.getElementById('popupContainer');
-    popupContainer.style.display = 'block';
+    const popupContainer = document.getElementById("popupContainer");
+    popupContainer.style.display = "block";
 
-    // Automatically close the popup after the specified duration
     setTimeout(() => {
         closePopup();
     }, 2000);
 }
 
-// Function to close the popup
 function closePopup() {
-    const popupContainer = document.getElementById('popupContainer');
-    popupContainer.style.display = 'none';
+    const popupContainer = document.getElementById("popupContainer");
+    popupContainer.style.display = "none";
 }
 
-// Function to generate star icons based on rating
 function renderRatingStars(rating) {
     const maxRating = 5;
     const stars = [];
@@ -68,14 +65,16 @@ const ProductDetailsPage = ({ user }) => {
     const [currentImage, setCurrentImage] = useState(null);
     const [showShareDropdown, setShowShareDropdown] = useState(false);
     const [rating, setRating] = useState(0);
-    const [reviewText, setReviewText] = useState('');
+    const [reviewText, setReviewText] = useState("");
     const [review, setReview] = useState(null);
+    const [reviewTitle, setReviewTitle] = useState("");
+    const [showReviewForm, setShowReviewForm] = useState(false);
 
     useEffect(() => {
         const fetchProduct = async () => {
             try {
                 const response = await axios.get(
-                    `http://localhost:5000/api/products/${productId}`
+                    `http://localhost:5000/api/user/products/${productId}`
                 );
                 setProduct(response.data.product);
                 setCurrentImage(response.data.product.imagePath);
@@ -90,11 +89,11 @@ const ProductDetailsPage = ({ user }) => {
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const response = await axios.get(
-                    `http://localhost:5000/api/reviews`
-                );
+                const response = await axios.get(`http://localhost:5000/api/user/reviews`);
                 const allReviews = response.data.reviews;
-                const filteredReviews = allReviews.filter(review => review.product === productId);
+                const filteredReviews = allReviews.filter(
+                    (review) => review.product === productId
+                );
                 setReview(filteredReviews);
             } catch (error) {
                 console.error("Error fetching reviews:", error);
@@ -108,20 +107,25 @@ const ProductDetailsPage = ({ user }) => {
         setCurrentImage(imagePath);
     };
 
+    const navigate = useNavigate();
     const addToCart = async (item) => {
-        try {
-            const response = await axios.post(
-                `http://localhost:5000/api/carts/addToCart`,
-                {
-                    productId: item._id,
-                    userId: user._id,
+        if (!user) {
+            navigate('/login');
+        } else {
+            try {
+                const response = await axios.post(
+                    `http://localhost:5000/api/user/carts/addToCart`,
+                    {
+                        productId: item._id,
+                        userId: user._id,
+                    }
+                );
+                if (response.status === 200) {
+                    window.alert("Product added to cart successfully");
                 }
-            );
-            if (response.status === 200) {
-                window.alert("Product added to cart successfully");
+            } catch (error) {
+                console.error("Error adding product to cart:", error);
             }
-        } catch (error) {
-            console.error("Error adding product to cart:", error);
         }
     };
 
@@ -164,190 +168,267 @@ const ProductDetailsPage = ({ user }) => {
         window.open(url, "_blank");
     };
 
+    const handleRatingChange = (newRating) => {
+        setRating(newRating); // Update the rating state
+    };
+
+    const StarRating = ({ initialRating, onRatingChange }) => {
+        const [rating, setRating] = useState(initialRating);
+
+        const handleClick = (selectedRating) => {
+            setRating(selectedRating);
+            onRatingChange(selectedRating); // Notify parent component of rating change
+        };
+
+        const maxRating = 5;
+        const stars = [];
+
+        for (let i = 1; i <= maxRating; i++) {
+            const starIcon = i <= rating ? solidStar : regularStar;
+
+            stars.push(
+                <FontAwesomeIcon
+                    key={ i }
+                    icon={ starIcon }
+                    className="star"
+                    onClick={ () => handleClick(i) }
+                />
+            );
+        }
+
+        return <div className="rating-stars-review">{ stars }</div>;
+    };
+    // console.log(rating);
+
     const submitReview = async () => {
         const pobj = {
             productId,
             userId: user._id,
             username: user.name,
-            rating,
-            reviewText
-        }
+            reviewRating: rating,
+            reviewTitle,
+            reviewText,
+        };
+        // console.log(rating);
 
         try {
-            const response = await axios.post(`http://localhost:5000/api/reviews`, pobj);
+            const response = await axios.post(
+                `http://localhost:5000/api/user/reviews`,
+                pobj
+            );
             openPopup();
             window.location.reload();
-
-            if (response.status === 200) {
-                alert('Review submitted successfully');
-            }
+            setShowReviewForm(false);
         } catch (error) {
-            console.error('Error submitting review:', error);
+            console.error("Error submitting review:", error);
         }
     };
 
     return (
-        <div>
+        <div className="product-topdiv">
             {/* <Header user={user} /> */ }
             { product && (
                 <div className="crd-wrpr">
                     <div className="crd">
                         <div className="prd-imgs">
                             <div className="img-dsply">
-                                <img src={ `/${currentImage}` } alt="" />
+                                <img src={ `${currentImage}` } alt="" />
                             </div>
                             <div className="img-shwcse">
                                 <img
-                                    src={ `/${product.imagePath}` }
+                                    src={ `${product.imagePath}` }
                                     alt=""
                                     onClick={ () => handleThumbnailClick(product.imagePath) }
                                 />
                                 <img
-                                    src={ `/${product.imagethumbnail1}` }
+                                    src={ `${product.imagethumbnail1}` }
                                     alt=""
                                     onClick={ () => handleThumbnailClick(product.imagethumbnail1) }
                                 />
                                 <img
-                                    src={ `/${product.imagethumbnail2}` }
+                                    src={ `${product.imagethumbnail2}` }
                                     alt=""
                                     onClick={ () => handleThumbnailClick(product.imagethumbnail2) }
                                 />
                                 <img
-                                    src={ `/${product.imagethumbnail3}` }
+                                    src={ `${product.imagethumbnail3}` }
                                     alt=""
                                     onClick={ () => handleThumbnailClick(product.imagethumbnail3) }
                                 />
                             </div>
                         </div>
-                        <div className="prd-ctnt">
-                            <h3 className="prd-ttl">{ product.title }</h3>
-                            <div className="prd-rating">
-                                <div className="rating-stars">
-                                    <p>
-                                        { renderRatingStars(product.rating) } ({ product.rating })
-                                    </p>
+                        <div className="prd-rem">
+                            <div className="prd-ctnt">
+                                <h3 className="prd-ttl">{ product.title }</h3>
+                                <div className="prd-rating">
+                                    <div className="rating-stars">
+                                        <p>
+                                            { product.rating }  { renderRatingStars(product.rating) }  ({ product.reviewed })
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div>
-                                <div className="prd-price">
-                                    <p className="lst-prc">
-                                        INR.{ product.price }
-                                        <span>INR.{ product.mrp }</span>
-                                    </p>
-                                </div>
-                                <div className="prd-dtl">
-                                    <h2>About this item:</h2>
-                                    <p>{ product.description }</p>
-                                    <h2 className="feauters">Feauters</h2>
-                                    <ul>
-                                        <li>{ product.features1 }</li>
-                                        <li>{ product.features2 }</li>
-                                        <li>{ product.features3 }</li>
-                                        <li>{ product.features4 }</li>
-                                    </ul>
-                                </div>
-                                <div className="pchs-info">
-                                    <button
-                                        className="add-wshlst-btn"
-                                        id="addtocart"
-                                        data-product-id-w={ product._id }
-                                    >
-                                        <FontAwesomeIcon
-                                            className="heart-icon-single"
-                                            icon={ faHeart }
-                                        />
-                                        Add to Wishlist
-                                    </button>
-                                    <button
-                                        className="add-cr-btn"
-                                        id="addtowishlist"
-                                        data-product-id-c={ product._id }
-                                        onClick={ () => addToCart(product) }
-                                    >
-                                        <FontAwesomeIcon
-                                            className="cart-icon-single"
-                                            icon={ faCartShopping }
-                                        />
-                                        Add to Cart
-                                    </button>
-                                    <div className="share-dropdown">
+                                <div>
+                                    <div className="prd-price">
+                                        <p className="lst-prc">
+                                            INR.{ product.price }
+                                            <span>INR.{ product.mrp }</span>
+                                        </p>
+                                    </div>
+                                    <div className="prd-dtl">
+                                        <h2>About this item:</h2>
+                                        <p>{ product.description }</p>
+                                        <h2 className="feauters">Feauters</h2>
+                                        <ul>
+                                            <li>{ product.features1 }</li>
+                                            <li>{ product.features2 }</li>
+                                            <li>{ product.features3 }</li>
+                                            <li>{ product.features4 }</li>
+                                        </ul>
+                                    </div>
+                                    <div className="pchs-info">
                                         <button
-                                            className="sharre-btn"
-                                            onClick={ toggleShareDropdown }
+                                            className="add-wshlst-btn"
+                                            id="addtocart"
+                                            data-product-id-w={ product._id }
                                         >
-                                            <FontAwesomeIcon icon={ faShare } size="2x" />
+                                            <FontAwesomeIcon
+                                                className="heart-icon-single"
+                                                icon={ faHeart }
+                                            />
+                                            Add to Wishlist
                                         </button>
-                                        { showShareDropdown && (
-                                            <div className="share-dropdown-content">
-                                                <button className="share-btn" onClick={ shareToGmail }>
-                                                    <FontAwesomeIcon icon={ faEnvelope } size="2x" />
-                                                </button>
-                                                <button
-                                                    className="share-btn"
-                                                    id="whatsapp"
-                                                    onClick={ shareToWhatsApp }
-                                                    icon={ faCartShopping }
-                                                >
-                                                    <FontAwesomeIcon icon={ faWhatsapp } size="2x" />
-                                                </button>
-                                                <button className="share-btn" onClick={ shareToFacebook }>
-                                                    <FontAwesomeIcon icon={ faFacebook } size="2x" />
-                                                </button>
-                                                <button className="share-btn" onClick={ shareToTwitter }>
-                                                    <FontAwesomeIcon icon={ faTwitter } size="2x" />{ " " }
-                                                </button>
-                                                <button className="share-btn" onClick={ shareToTelegram }>
-                                                    <FontAwesomeIcon icon={ faTelegram } size="2x" />{ " " }
-                                                </button>
-                                            </div>
-                                        ) }
+                                        <button
+                                            className="add-cr-btn"
+                                            id="addtowishlist"
+                                            data-product-id-c={ product._id }
+                                            onClick={ () => addToCart(product) }
+                                        >
+                                            <FontAwesomeIcon
+                                                className="cart-icon-single"
+                                                icon={ faCartShopping }
+                                            />
+                                            Add to Cart
+                                        </button>
+                                        <div className="share-dropdown">
+                                            <button
+                                                className="sharre-btn"
+                                                onClick={ toggleShareDropdown }
+                                            >
+                                                <FontAwesomeIcon icon={ faShare } size="2x" />
+                                            </button>
+                                            { showShareDropdown && (
+                                                <div className="share-dropdown-content">
+                                                    <button className="share-btn" onClick={ shareToGmail }>
+                                                        <FontAwesomeIcon icon={ faEnvelope } size="2x" />
+                                                    </button>
+                                                    <button
+                                                        className="share-btn"
+                                                        id="whatsapp"
+                                                        onClick={ shareToWhatsApp }
+                                                        icon={ faCartShopping }
+                                                    >
+                                                        <FontAwesomeIcon icon={ faWhatsapp } size="2x" />
+                                                    </button>
+                                                    <button
+                                                        className="share-btn"
+                                                        onClick={ shareToFacebook }
+                                                    >
+                                                        <FontAwesomeIcon icon={ faFacebook } size="2x" />
+                                                    </button>
+                                                    <button
+                                                        className="share-btn"
+                                                        onClick={ shareToTwitter }
+                                                    >
+                                                        <FontAwesomeIcon icon={ faTwitter } size="2x" />{ " " }
+                                                    </button>
+                                                    <button
+                                                        className="share-btn"
+                                                        onClick={ shareToTelegram }
+                                                    >
+                                                        <FontAwesomeIcon icon={ faTelegram } size="2x" />{ " " }
+                                                    </button>
+                                                </div>
+                                            ) }
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div className="review-section">
-                        <h2>Reviews</h2>
-                        <div className="previous-reviews">
-                            { review && review.map((review, index) => (
-                                <div key={ index } className="review">
-                                    <p>
-                                        <strong>{ review.username }</strong>
-                                    </p>
-                                    <p>Rating: { renderRatingStars(review.rating) }</p>
-                                    <p>{ review.reviewText }</p>
+                            <div className="review-section">
+                                <h2>Reviews</h2>
+                                <div className="previous-reviews">
+                                    { review &&
+                                        review.map((review, index) => (
+                                            <div key={ index } className="review">
+                                                <div className="reviewer-name">
+                                                    <FontAwesomeIcon icon={ faUser } />
+                                                    <p className="reviewer">{ review.username }</p>
+                                                </div>
+                                                <div className="reviewer-rating">
+                                                    <p id="rating">{ renderRatingStars(review.reviewRating) }</p>
+                                                    <p id="title">{ review.reviewTitle } </p>
+                                                </div>
+                                                <div className="">
+                                                    <p id="review">{ review.reviewText }</p>
+                                                </div>
+                                            </div>
+                                        )) }
                                 </div>
-                            )) }
-                        </div>
-                        { user && (
-                            <div className="review-form">
-                                <h3>Write a Review</h3>
-                                <div className="rating-input">
-                                    <label htmlFor="rating">Rating:</label>
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        max="5"
-                                        value={ rating }
-                                        onChange={ (e) => setRating(e.target.value) }
-                                    />
-                                </div>
-                                <div className="review-text-input">
-                                    <label htmlFor="reviewText">Review:</label>
-                                    <textarea
-                                        value={ reviewText }
-                                        onChange={ (e) => setReviewText(e.target.value) }
-                                    ></textarea>
-                                </div>
-                                <button className="submit-review-btn" onClick={ submitReview }>
-                                    Submit Review
-                                </button>
+                                { user && (
+                                    <>
+                                        { !showReviewForm && (
+                                            <div className="user-review">
+                                                <p>Review This Product</p>
+                                                <button
+                                                    className="write-review-btn"
+                                                    onClick={ () => setShowReviewForm(!showReviewForm) }
+                                                >
+                                                    Write a Review
+                                                </button>
+                                            </div>
+                                        ) }
+                                        { showReviewForm && (
+                                            <div className="review-form">
+                                                <div className="rating-input">
+                                                    <label htmlFor="rating">How would you rate it?</label>
+                                                    <StarRating
+                                                        initialRating={ rating }
+                                                        onRatingChange={ handleRatingChange }
+                                                    />
+                                                </div>
+                                                <div className="review-title-input">
+                                                    <label htmlFor="reviewTitle">Title your review</label>
+                                                    <input
+                                                        value={ reviewTitle }
+                                                        placeholder="What's most important to know?"
+                                                        onChange={ (e) => setReviewTitle(e.target.value) }
+                                                    ></input>
+                                                </div>
+                                                <div className="review-text-input">
+                                                    <label htmlFor="reviewText">Write your review</label>
+                                                    <textarea
+                                                        value={ reviewText }
+                                                        placeholder="What did you like or dislike?"
+                                                        onChange={ (e) => setReviewText(e.target.value) }
+                                                    ></textarea>
+                                                </div>
+                                                <button
+                                                    className="submit-review-btn"
+                                                    onClick={ submitReview }
+                                                >
+                                                    Submit Review
+                                                </button>
+                                            </div>
+                                        ) }
+                                    </>
+                                ) }
                             </div>
-                        ) }
+                        </div>
                     </div>
                     <div className="popup-container" id="popupContainer">
                         <div className="popup-content">
-                            <span className="close-btn" onClick={ closePopup }>&times;</span>
+                            <span className="close-btn" onClick={ closePopup }>
+                                &times;
+                            </span>
                             <h2>Success!</h2>
                             <p>Your review has been submitted successfully.</p>
                         </div>

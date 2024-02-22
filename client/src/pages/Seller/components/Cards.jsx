@@ -22,13 +22,17 @@ const Card = (props) => {
   return (
     <LayoutGroup id="b">
       {expanded ? (
-        <ExpandedCard param={props} setExpanded={() => {setExpanded(false)
-            }
-        } />
+        <ExpandedCard
+          param={props}
+          months={props.months}
+          setExpanded={() => {
+            setExpanded(false);
+          }}
+        />
       ) : (
         <CompactCard param={props} setExpanded={() => setExpanded(true)} />
       )}
-    </LayoutGroup >
+    </LayoutGroup>
   );
 };
 
@@ -45,23 +49,20 @@ function CompactCard({ param, setExpanded }) {
       layoutId="expandableCard"
     >
       <div className="radialBar">
-        <CircularProgressbar
-          value={param.barValue}
-          text={`${param.barValue}%`}
-        />
         <span>{param.title}</span>
+        <CircularProgressbar value={param.value} text={`${param.value}`} />
       </div>
 
       <div className="detail">
         <Png />
-        <span>${param.value}</span>
+        <span>{param.value} users</span>
         <span>Last 24 Hours</span>
       </div>
     </motion.div>
   );
 }
 
-function ExpandedCard({ param, setExpanded }) {
+function ExpandedCard({ param, setExpanded, months }) {
   const data = {
     options: {
       chart: {
@@ -98,15 +99,7 @@ function ExpandedCard({ param, setExpanded }) {
       },
       xaxis: {
         type: "datetime",
-        categories: [
-          "2018-09-19T00:00:00.000Z",
-          "2018-09-19T01:30:00.000Z",
-          "2018-09-19T02:30:00.000Z",
-          "2018-09-19T03:30:00.000Z",
-          "2018-09-19T04:30:00.000Z",
-          "2018-09-19T05:30:00.000Z",
-          "2018-09-19T06:30:00.000Z",
-        ],
+        categories: months,
       },
     },
   };
@@ -133,14 +126,14 @@ function ExpandedCard({ param, setExpanded }) {
 
 const card = [
   {
-    title: "Sales",
+    title: "Users",
     color: {
-      backGround: "linear-gradient(180deg, #b9f3f5  0%,  #5f9ea0 100%)",
+      backGround: "linear-gradient(180deg, #efb369 0%, #c97d20 100%)",
       boxShadow: "0px 10px 20px 0px #e0c6f5",
     },
     barValue: 70,
     value: "25,970",
-    png: UilUsdSquare,
+    png: UilUsersAlt,
     series: [
       {
         name: "Sales",
@@ -150,7 +143,51 @@ const card = [
   },
 ];
 
-const Cards = () => {
+const Cards = (props) => {
+  const orders = props.sales;
+
+  // Extract unique user IDs from the orders' data
+  const uniqueUsers = Array.from(new Set(orders.map((order) => order.userId)));
+
+  const orderDates = orders.map((order) => new Date(order.createdAt));
+
+  const ordersByMonth = {};
+  orderDates.forEach((date) => {
+    const yearMonth = `${date.getFullYear()}-${date.getMonth() + 1}`;
+    ordersByMonth[yearMonth] = (ordersByMonth[yearMonth] || 0) + 1;
+  });
+
+  const months = [];
+  const uniqueUserCounts = []; // Array to store unique user counts
+
+  const today = new Date();
+  let currentMonth = today.getMonth() + 1;
+  let currentYear = today.getFullYear();
+
+  for (let i = 0; i < 6; i++) {
+    if (currentMonth === 0) {
+      currentMonth = 12;
+      currentYear--;
+    }
+    const yearMonth = `${currentYear}-${currentMonth}`;
+    months.unshift(yearMonth);
+    uniqueUserCounts.unshift(ordersByMonth[yearMonth] || 0); // Count unique users for each month
+    currentMonth--;
+  }
+
+  // Calculate the total unique users for the past 6 months
+  let totalUniqueUsers = uniqueUserCounts.reduce(
+    (total, count) => total + count,
+    0
+  );
+
+  const order_data = [
+    {
+      name: "Sales",
+      data: uniqueUserCounts,
+    },
+  ];
+
   return (
     <div className="Cards">
       <div className="parentContainer">
@@ -158,9 +195,10 @@ const Cards = () => {
           title={card[0].title}
           color={card[0].color}
           barValue={card[0].barValue}
-          value={card[0].value}
+          value={totalUniqueUsers - 6}
           png={card[0].png}
           series={card[0].series}
+          months={months}
         />
       </div>
     </div>

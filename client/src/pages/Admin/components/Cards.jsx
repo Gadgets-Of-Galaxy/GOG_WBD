@@ -1,12 +1,13 @@
 import { CardsData } from "../Data/Data";
 import "../styles/Cards.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/Card.css";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { motion, LayoutGroup } from "framer-motion";
 import { UilTimes } from "@iconscout/react-unicons";
 import Chart from "react-apexcharts";
+import axios from "axios";
 import {
   UilEstate,
   UilClipboardAlt,
@@ -18,26 +19,24 @@ import {
 } from "@iconscout/react-unicons";
 
 const Card = (props) => {
-
-  
-
-
-
-  const [expanded, setExpanded] = useState(false);
+  // console.log(props.months);
+  const [expanded1, setExpanded1] = useState(false);
   return (
-    <LayoutGroup id="b">
-      {expanded ? (
-        <ExpandedCard param={props} setExpanded={() => {setExpanded(false)
-            }
-        } />
+    <LayoutGroup id="a">
+      {expanded1 ? (
+        <ExpandedCard1
+          param={props}
+          months={props.months}
+          setExpanded1={() => setExpanded1(false)}
+        />
       ) : (
-        <CompactCard param={props} setExpanded={() => setExpanded(true)} />
+        <CompactCard1 param={props} setExpanded1={() => setExpanded1(true)} />
       )}
-    </LayoutGroup >
+    </LayoutGroup>
   );
 };
 
-function CompactCard({ param, setExpanded }) {
+function CompactCard1({ param, setExpanded1 }) {
   const Png = param.png;
   return (
     <motion.div
@@ -46,27 +45,24 @@ function CompactCard({ param, setExpanded }) {
         background: param.color.backGround,
         boxShadow: param.color.boxShadow,
       }}
-      onClick={setExpanded}
+      onClick={setExpanded1}
       layoutId="expandableCard"
     >
       <div className="radialBar">
-        <CircularProgressbar
-          value={param.barValue}
-          text={`${param.barValue}%`}
-        />
-        <span>{param.title}</span>
+        <span>Users</span>
+        <CircularProgressbar value={param.value} text={`${param.value}`} />
       </div>
 
       <div className="detail">
         <Png />
-        <span>${param.value}</span>
-        <span>Last 24 Hours</span>
+        <span>{param.value} users</span>
+        <span>Last 6 months</span>
       </div>
     </motion.div>
   );
 }
 
-function ExpandedCard({ param, setExpanded }) {
+function ExpandedCard1({ param, setExpanded1, months }) {
   const data = {
     options: {
       chart: {
@@ -103,15 +99,7 @@ function ExpandedCard({ param, setExpanded }) {
       },
       xaxis: {
         type: "datetime",
-        categories: [
-          "2018-09-19T00:00:00.000Z",
-          "2018-09-19T01:30:00.000Z",
-          "2018-09-19T02:30:00.000Z",
-          "2018-09-19T03:30:00.000Z",
-          "2018-09-19T04:30:00.000Z",
-          "2018-09-19T05:30:00.000Z",
-          "2018-09-19T06:30:00.000Z",
-        ],
+        categories: months,
       },
     },
   };
@@ -125,22 +113,22 @@ function ExpandedCard({ param, setExpanded }) {
       layoutId="expandableCard"
     >
       <div style={{ alignSelf: "flex-end", cursor: "pointer", color: "white" }}>
-        <UilTimes onClick={setExpanded} />
+        <UilTimes onClick={setExpanded1} />
       </div>
       <span>{param.title}</span>
       <div className="chartContainer">
         <Chart series={param.series} type="area" options={data.options} />
       </div>
-      <span>Last 24 Hours</span>
+      <span>Last 6 months</span>
     </motion.div>
   );
 }
 
 const card = [
   {
-    title: "Sales",
+    title: "Users",
     color: {
-      backGround: "linear-gradient(180deg, #b9f3f5  0%,  #5f9ea0 100%)",
+      backGround: "linear-gradient(180deg, #efb369 0%, #c97d20 100%)",
       boxShadow: "0px 10px 20px 0px #e0c6f5",
     },
     barValue: 70,
@@ -148,14 +136,54 @@ const card = [
     png: UilUsdSquare,
     series: [
       {
-        name: "Sales",
+        name: "Users",
         data: [31, 40, 28, 51, 42, 109, 100],
       },
     ],
   },
 ];
 
-const Cards = () => {
+const Cards = (props) => {
+  const orders = props.users;
+
+  const orderDates = orders.map((order) => new Date(order.createdAt));
+
+  const ordersByMonth = {};
+  orderDates.forEach((date) => {
+    const yearMonth = `${date.getFullYear()}-${date.getMonth() + 1}`;
+    ordersByMonth[yearMonth] = (ordersByMonth[yearMonth] || 0) + 1;
+  });
+
+  const months = [];
+  const orderCounts = [];
+
+  const today = new Date();
+  let currentMonth = today.getMonth() + 1;
+  let currentYear = today.getFullYear();
+
+  for (let i = 0; i < 6; i++) {
+    if (currentMonth === 0) {
+      currentMonth = 12;
+      currentYear--;
+    }
+    const yearMonth = `${currentYear}-${currentMonth}`;
+    months.unshift(yearMonth);
+    orderCounts.unshift(ordersByMonth[yearMonth] || 0);
+    currentMonth--;
+  }
+  let total_orders = orderCounts.reduce((total, count) => total + count, 0);
+
+  // console.log(months);
+  // console.log(orderCounts);
+  // console.log(total_orders);
+
+  const order_data = [
+    {
+      name: "Users",
+      data: orderCounts,
+    },
+  ];
+
   return (
     <div className="Cards">
       <div className="parentContainer">
@@ -163,9 +191,10 @@ const Cards = () => {
           title={card[0].title}
           color={card[0].color}
           barValue={card[0].barValue}
-          value={card[0].value}
+          value={total_orders}
           png={card[0].png}
-          series={card[0].series}
+          series={order_data}
+          months={months}
         />
       </div>
     </div>

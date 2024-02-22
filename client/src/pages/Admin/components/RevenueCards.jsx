@@ -60,7 +60,7 @@ function CompactCard1({ param, setExpanded1 }) {
 }
 
 function ExpandedCard1({ param, setExpanded1, months }) {
-  console.log(months);
+  // console.log(months);
   const data = {
     options: {
       chart: {
@@ -171,8 +171,8 @@ const RevenueCard = (props) => {
     currentMonth--;
   }
 
-  console.log(months);
-  console.log(totalAmounts);
+  // console.log(months);
+  // console.log(totalAmounts);
   let total_amount = totalAmounts.reduce((total, count) => total + count, 0);
   const revenue_data = [
     {
