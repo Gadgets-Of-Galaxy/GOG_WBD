@@ -1,4 +1,4 @@
-# GOG_Final
+# GOG_WBD_MID
 # E-commerce Gadgets of Galaxy Demo
 
 This is an application that demonstrates an E-commerce website using the nodejs. The application loads 
