@@ -1,10 +1,13 @@
 # GOG_Final
 # E-commerce Gadgets of Galaxy Demo
 
-This is a sample application that demonstrates an E-commerce website using the nodejs. The application loads 
-products from MongoDB database and displays them. The loading page directly takes to home page. Users can register
-and login through gmail and buy products. click on any product to get more information including pricing. Users can select items and 
+This is an application that demonstrates an E-commerce website using the nodejs. The application loads 
+products from MongoDB database and displays them. The loading page directly takes to home page.
+We have three types of users.  
+Users can register and login through gmail, buy products and can add reviews. Click on any product to get more information including pricing. Users can select items and 
 add them to their shopping cart and wishlist.
+Sellers can add products, check the reviews and manage his dashboard.
+Admin can approve or revoke sellers and can give reply to mesaages of users.
 
 ## Import Data
 We have included a DB dump file in this repo. Import them to your mongodatabase and connect the string to your code.
