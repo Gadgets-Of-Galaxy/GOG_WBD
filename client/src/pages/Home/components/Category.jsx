@@ -46,7 +46,14 @@ export const Category = ({ sortedProducts }) => {
     )
     : [];
 
-  const allBrands = products.map((product) => product.brand);
+  let allbrands = [];
+  for (const product of products) {
+    if (product.length > 0) {
+      allbrands = allbrands.concat(product.brand);
+    }
+  }
+
+  const allBrands = products.map((product) => product.brand) || allbrands;
   const uniqueBrandsSet = new Set(allBrands);
   const brands = Array.from(uniqueBrandsSet);
 
@@ -70,12 +77,12 @@ export const Category = ({ sortedProducts }) => {
           return a.price - b.price;
         case "price-desc":
           return b.price - a.price;
-          case "mostsold":
-            return b.sold - a.sold;
+        case "mostsold":
+          return b.sold - a.sold;
         case "rating(desc)":
           return b.rating - a.rating;
-          case "rating(asc)":
-            return a.rating - b.rating;
+        case "rating(asc)":
+          return a.rating - b.rating;
         default:
           return 0;
       }
@@ -122,9 +129,9 @@ export const Category = ({ sortedProducts }) => {
     <>
       {/* <Header user={ user } onFilteredProducts={ handleFilteredProducts } /> */ }
       <div id="page" className="site page-category">
-      <div className="content-container">
-        <div className="filters">
-          {/* <div className="filter-block">
+        <div className="content-container">
+          <div className="filters">
+            {/* <div className="filter-block">
             <h4>Category</h4>
             { uniqueCategories.map((category) => (
               <ul key={ category.title }>
@@ -144,65 +151,65 @@ export const Category = ({ sortedProducts }) => {
               </ul>
             )) }
           </div> */}
-          <div className="filter-block">
-            <h4>Brands</h4>
-            { filteringOptions
-              .map((option) => (
-                <ul key={ option.id }>
-                  <li>
-                    <input
-                      type="checkbox"
-                      name="checkbox"
-                      id={ option.id }
-                      checked={ selectedBrands.includes(option.label) }
-                      onChange={ () => handleBrandChange(option.label) }
-                    />
-                    <label htmlFor={ option.id } className="brand-label">
-                      <span className="checked">{ option.label }</span>
-                    </label>
-                  </li>
-                </ul>
-              )) }
-          </div>
+            <div className="filter-block">
+              <h4>Brands</h4>
+              { filteringOptions
+                .map((option) => (
+                  <ul key={ option.id }>
+                    <li>
+                      <input
+                        type="checkbox"
+                        name="checkbox"
+                        id={ option.id }
+                        checked={ selectedBrands.includes(option.label) }
+                        onChange={ () => handleBrandChange(option.label) }
+                      />
+                      <label htmlFor={ option.id } className="brand-label">
+                        <span className="checked">{ option.label }</span>
+                      </label>
+                    </li>
+                  </ul>
+                )) }
+            </div>
 
+          </div>
         </div>
-      </div>
-      <div className="top-right-filters">
-        <div className="sort-by">
-          <h4>Sort By</h4>
-          <select value={ sortBy } onChange={ handleSortByChange }>
-            <option value="">Select</option>
-            <option value="price-desc">Price (High to Low)</option>
-            <option value="price-asc">Price (Low to High)</option>
-            <option value="mostsold">Most Sold</option>
-            <option value="rating(desc)">Rating (High to Low)</option>
-            <option value="rating(asc)">Rating (Low to High)</option>
-          </select>
+        <div className="top-right-filters">
+          <div className="sort-by">
+            <h4>Sort By</h4>
+            <select value={ sortBy } onChange={ handleSortByChange }>
+              <option value="">Select</option>
+              <option value="price-desc">Price (High to Low)</option>
+              <option value="price-asc">Price (Low to High)</option>
+              <option value="mostsold">Most Sold</option>
+              <option value="rating(desc)">Rating (High to Low)</option>
+              <option value="rating(asc)">Rating (Low to High)</option>
+            </select>
+          </div>
+          <div className="toshow">
+            <h4>Products to Show</h4>
+            <select
+              value={ productsToShow }
+              onChange={ handleProductsToShowChange }
+            >
+              <option value="8">8</option>
+              <option value="12">12</option>
+              <option value="24">24</option>
+            </select>
+          </div>
         </div>
-        <div className="toshow">
-          <h4>Products to Show</h4>
-          <select
-            value={ productsToShow }
-            onChange={ handleProductsToShowChange }
-          >
-            <option value="8">8</option>
-            <option value="12">12</option>
-            <option value="24">24</option>
-          </select>
+        <div className="products">
+          <div className="products category-products main flexwrap">
+            { !products || products.length === 0
+              ? allProducts.slice(0, productsToShow).map((product) => (
+                <CategoryProduct key={ product._id } product={ product } />
+              ))
+              : products.slice(0, productsToShow).map((product) => (
+                <CategoryProduct key={ product._id } product={ product } />
+              )) }
+
+          </div>
         </div>
-      </div>
-      <div className="products">
-        <div className="products category-products main flexwrap">
-        { !products || products.length === 0
-            ? allProducts.slice(0, productsToShow).map((product) => (
-              <CategoryProduct key={product._id} product={ product } />
-            ))
-            : products.slice(0, productsToShow).map((product) => (
-              <CategoryProduct key={product._id} product={ product } />
-            )) }
-            
-        </div>
-      </div>
       </div>
       <Footer />
     </>

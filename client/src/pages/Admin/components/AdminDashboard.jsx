@@ -27,7 +27,7 @@ export const AdminDashboard = () => {
         const sortedOrders = data.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
         );
-        const latestOrders = sortedOrders.slice(0, 3);
+        const latestOrders = sortedOrders.slice(0, 5);
         const ordersWithUserDetails = await Promise.all(
           latestOrders.map(async (order) => {
             const userResponse = await axios.get(

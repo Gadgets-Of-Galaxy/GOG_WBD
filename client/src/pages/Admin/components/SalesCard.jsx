@@ -133,7 +133,7 @@ const card = [
     },
     barValue: 70,
     value: "25,970",
-    png: UilUsdSquare,
+    png: UilPackage,
     series: [
       {
         name: "Orders",

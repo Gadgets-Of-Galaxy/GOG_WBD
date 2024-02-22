@@ -43,10 +43,10 @@ function CompactCard1({ param, setExpanded1 }) {
       layoutId="expandableCard"
     >
       <div className="radialBar">
-        <CircularProgressbar
+        {/* <CircularProgressbar
           value={param.barValue}
           text={`${param.barValue}%`}
-        />
+        /> */}
         <span>{param.title}</span>
       </div>
 
@@ -124,7 +124,7 @@ function ExpandedCard1({ param, setExpanded1, months }) {
 
 const card = [
   {
-    title: "Sales",
+    title: "Revenue",
     color: {
       backGround: "linear-gradient(180deg, #efb369 0%, #c97d20 100%)",
       boxShadow: "0px 10px 20px 0px #e0c6f5",

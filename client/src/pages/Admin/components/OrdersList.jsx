@@ -93,7 +93,7 @@ export const OrdersList = () => {
                                             <td>{serialNumber++}</td>
                                             <td>{item.productCode}</td>
                                             <td>
-                                                <img src={`/${item.imagePath}`} alt="Product" className="product-image" />
+                                                <img src={`${item.imagePath}`} alt="Product" className="product-image" />
                                             </td>
                                             <td>{item.title}</td>
                                             <td>{item.qty}</td>
