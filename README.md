@@ -13,7 +13,7 @@ Admin can approve or revoke sellers and can give reply to mesaages of users.
 We have included a DB dump file in this repo. Import them to your mongodatabase and connect the string to your code.
 
 ## Getting Started
-To get started  you can simply clone this `GOG` repository and install the dependencies.
+To get started you can simply clone this `GOG` repository and install the dependencies.
 
 Clone the `GOG` repository using git:
 
