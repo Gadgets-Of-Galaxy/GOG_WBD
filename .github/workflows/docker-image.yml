@@ -15,8 +15,13 @@ jobs:
       - name: Log in to Docker Hub
         run: docker login -u hemanth0921 -p ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag ${{ secrets.DOCKERHUB_USERNAME }}/gog
+      - name: Build and push Docker images
+        env:
+          DOCKER_BUILDKIT: 1
+        run: |
+          docker-compose build
+          docker-compose push
 
-      - name: Docker Push
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/gog
+      - name: Deploy
+        run: |
+          docker-compose up -d
