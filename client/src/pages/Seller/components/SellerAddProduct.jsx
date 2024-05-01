@@ -61,7 +61,7 @@ export const SellerAddProduct = ({seller}) => {
 
     try {
       const response = await axios.post(
-        "https://gog-backend-4fkg.onrender.com/api/seller/addproduct",
+        "https://gog-backend-t01u.onrender.com/api/seller/addproduct",
         formData,
         {
           headers: {

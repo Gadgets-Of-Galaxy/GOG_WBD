@@ -105,24 +105,6 @@ app.post('/sendemail', async (req, res) => {
     });
 });
 
-
-var csrf = require('csurf');
-const csrfProtection = csrf({
-    httpOnly: true,
-    cookie: true,
-    expiresIn: 30 * 60 * 1000
-});
-app.get('/api/getCSRFToken',csrfProtection, (req, res) => {
-    try {
-        console.log(req.csrfToken());
-        res.json({ CSRFToken: req.csrfToken() });
-
-    } catch (error) {
-        console.error("Error in getCSRFToken:", error);
-        res.status(500).json({ error: "Internal server error" });
-    }
-});
-
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 

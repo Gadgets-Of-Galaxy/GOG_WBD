@@ -9,7 +9,7 @@ export const SellersList = () => {
     useEffect(() => {
         const fetchSellers = async () => {
             try {
-                const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/seller');
+                const response = await axios.get('https://gog-backend-t01u.onrender.com/api/seller');
                 setSellers(response.data.sellers);
             } catch (error) {
                 console.error('Error fetching Sellers:', error);
@@ -37,7 +37,7 @@ export const SellersList = () => {
 
     const handleApprove = async (sellerId) => {
         try {
-            await axios.put(`https://gog-backend-4fkg.onrender.com/api/seller/${sellerId}/approve`);
+            await axios.put(`https://gog-backend-t01u.onrender.com/api/seller/${sellerId}/approve`);
             const updatedSellers = sellerList.map(seller => {
                 if (seller._id === sellerId) {
                     return { ...seller, approved: true };
@@ -56,7 +56,7 @@ export const SellersList = () => {
 
     const handleRevoke = async (sellerId) => {
         try {
-            await axios.put(`https://gog-backend-4fkg.onrender.com/api/seller/${sellerId}/revoke`);
+            await axios.put(`https://gog-backend-t01u.onrender.com/api/seller/${sellerId}/revoke`);
             const updatedSellers = sellerList.map(seller => {
                 if (seller._id === sellerId) {
                     return { ...seller, isSeller: false };

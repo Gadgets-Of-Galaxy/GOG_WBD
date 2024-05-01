@@ -10,7 +10,7 @@ export const OrdersList = () => {
     useEffect(() => {
         const fetchOrders = async () => {
             try {
-                const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/admin/orders/');
+                const response = await axios.get('https://gog-backend-t01u.onrender.com/api/admin/orders/');
                 setOrders(response.data);
             } catch (error) {
                 console.error('Error fetching Orders:', error);

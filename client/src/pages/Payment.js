@@ -10,7 +10,7 @@ function Payment() {
 			order_id: data.id,
 			handler: async (response) => {
 				try {
-					const verifyUrl = "https://gog-backend-4fkg.onrender.com/api/payment/verify";
+					const verifyUrl = "https://gog-backend-t01u.onrender.com/api/payment/verify";
 					const { data } = await axios.post(verifyUrl, response);
 					console.log(data);
 				} catch (error) {
@@ -27,7 +27,7 @@ function Payment() {
 
 	const handlePayment = async () => {
 		try {
-			const orderUrl = "https://gog-backend-4fkg.onrender.com/api/payment/orders";
+			const orderUrl = "https://gog-backend-t01u.onrender.com/api/payment/orders";
 			const { data } = await axios.post(orderUrl, { amount: 250 });
 			console.log(data);
 			initPayment(data.data);

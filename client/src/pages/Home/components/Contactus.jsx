@@ -90,7 +90,7 @@ export const Contactus = () => {
         }
 
         try {
-            const response = await axios.post('https://gog-backend-4fkg.onrender.com/api/user/contactus', formData);
+            const response = await axios.post('https://gog-backend-t01u.onrender.com/api/user/contactus', formData);
             window.alert(response.data);
             setError('');
             navigate('/');

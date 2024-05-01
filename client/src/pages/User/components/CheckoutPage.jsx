@@ -26,7 +26,7 @@ export const CheckoutPage = ({ user }) => {
         order_id: data.id,
         handler: async (response) => {
           try {
-            const verifyUrl = "https://gog-backend-4fkg.onrender.com/api/payment/verify";
+            const verifyUrl = "https://gog-backend-t01u.onrender.com/api/payment/verify";
             const { data } = await axios.post(verifyUrl, response);
             console.log(data);
           } catch (error) {
@@ -56,7 +56,7 @@ export const CheckoutPage = ({ user }) => {
   const handlePayment = async () => {
     try {
       console.log("Trying to initiate payment...");
-      const orderUrl = "https://gog-backend-4fkg.onrender.com/api/payment/orders";
+      const orderUrl = "https://gog-backend-t01u.onrender.com/api/payment/orders";
       const { data } = await axios.post(orderUrl, { amount: 1.08*subtotal});
       console.log("Received order data:", data);
       initPayment(data.data);
@@ -83,7 +83,7 @@ export const CheckoutPage = ({ user }) => {
     const fetchCartItems = async () => {
       try {
         const response = await axios.get(
-          `https://gog-backend-4fkg.onrender.com/api/user/carts/${user._id}`
+          `https://gog-backend-t01u.onrender.com/api/user/carts/${user._id}`
         );
         setCartItems(response.data.cartItems || []);
         calculateSubtotal(response.data.cartItems || []);
@@ -126,7 +126,7 @@ export const CheckoutPage = ({ user }) => {
         user: user._id,
       };
       const response = await axios.post(
-        "https://gog-backend-4fkg.onrender.com/api/user/checkout",
+        "https://gog-backend-t01u.onrender.com/api/user/checkout",
         checkoutData
       );
       console.log("Checkout successful!", response.data);

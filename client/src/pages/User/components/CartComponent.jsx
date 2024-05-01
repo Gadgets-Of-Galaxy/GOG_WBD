@@ -9,7 +9,7 @@ export const CartComponent = ({ user }) => {
     useEffect(() => {
         const fetchCartItems = async () => {
             try {
-                const response = await axios.get(`https://gog-backend-4fkg.onrender.com/api/user/carts/${user._id}`);
+                const response = await axios.get(`https://gog-backend-t01u.onrender.com/api/user/carts/${user._id}`);
                 setCartItems(response.data.cartItems || []);
                 calculateSubtotal(response.data.cartItems || []);
             } catch (error) {
@@ -24,7 +24,7 @@ export const CartComponent = ({ user }) => {
 
     const deleteFromCart = async (cartItemId) => {
         try {
-            await axios.delete(`https://gog-backend-4fkg.onrender.com/api/user/carts/${user._id}/deleteItem/${cartItemId}`);
+            await axios.delete(`https://gog-backend-t01u.onrender.com/api/user/carts/${user._id}/deleteItem/${cartItemId}`);
             setCartItems(cartItems.filter(cartItem => cartItem._id !== cartItemId));
         } catch (error) {
             console.error('Error deleting Cart Item:', error);
@@ -34,7 +34,7 @@ export const CartComponent = ({ user }) => {
     const updateCartItemQuantity = async (cartItemId, newQuantity) => {
         try {
             const response = await axios.put(
-                `https://gog-backend-4fkg.onrender.com/api/user/carts/${cartItemId}/updateQuantity`,
+                `https://gog-backend-t01u.onrender.com/api/user/carts/${cartItemId}/updateQuantity`,
                 { qty: newQuantity }
             );
 

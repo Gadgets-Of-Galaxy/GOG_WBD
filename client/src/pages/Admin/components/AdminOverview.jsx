@@ -12,7 +12,7 @@ export const AdminOverview = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/user/users');
+        const response = await axios.get('https://gog-backend-t01u.onrender.com/api/user/users');
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -24,7 +24,7 @@ export const AdminOverview = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("https://gog-backend-4fkg.onrender.com/api/user/checkouts");
+        const response = await axios.get("https://gog-backend-t01u.onrender.com/api/user/checkouts");
         const data = await response.data.checkouts;
         setOrders(data);
       } catch (error) {

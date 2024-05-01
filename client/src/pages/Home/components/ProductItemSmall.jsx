@@ -25,7 +25,7 @@ export const ProductItemSmall = (props) => {
 
     const fetchUserWishlists = async () => {
         try {
-            const response = await axios.get(`https://gog-backend-4fkg.onrender.com/api/user/wishlists/${user._id}`);
+            const response = await axios.get(`https://gog-backend-t01u.onrender.com/api/user/wishlists/${user._id}`);
             if (response.status === 200) {
                 // console.log(response.data.wishlists[0]);
                 // console.log(response.data);
@@ -68,7 +68,7 @@ export const ProductItemSmall = (props) => {
     const handleSaveWishlist = async () => {
         if (createNewWishlist) {
             try {
-                const response = await axios.post(`https://gog-backend-4fkg.onrender.com/api/user/wishlists/create/${user._id}`, {
+                const response = await axios.post(`https://gog-backend-t01u.onrender.com/api/user/wishlists/create/${user._id}`, {
                     name: wishlistName,
                 });
 
@@ -96,7 +96,7 @@ export const ProductItemSmall = (props) => {
 
     const addProductToWishlist = async (wishlistId) => {
         try {
-            const response = await axios.post(`https://gog-backend-4fkg.onrender.com/api/user/wishlists/addProduct/${wishlistId}`, {
+            const response = await axios.post(`https://gog-backend-t01u.onrender.com/api/user/wishlists/addProduct/${wishlistId}`, {
                 productId: productId,
                 imagePath: imagePath,
                 price: price,

@@ -9,7 +9,7 @@ export const WishlistComponent = ({ user }) => {
     useEffect(() => {
         const fetchWishlists = async () => {
             try {
-                const response = await axios.get(`https://gog-backend-4fkg.onrender.com/api/user/wishlists/${user._id}`);
+                const response = await axios.get(`https://gog-backend-t01u.onrender.com/api/user/wishlists/${user._id}`);
                 setWishlists(response.data.wishlists || []);
             } catch (error) {
                 console.error('Error fetching wishlists:', error);
@@ -21,7 +21,7 @@ export const WishlistComponent = ({ user }) => {
 
     const addToCart = async (item) => {
         try {
-            const response = await axios.post(`https://gog-backend-4fkg.onrender.com/api/user/carts/addToCart`, {
+            const response = await axios.post(`https://gog-backend-t01u.onrender.com/api/user/carts/addToCart`, {
                 productId: item.productId,
                 userId: user._id,
             });
@@ -36,7 +36,7 @@ export const WishlistComponent = ({ user }) => {
     const removeFromWishlist = async (item, wishlistId) => {
         try {
             // console.log(wishlistId, item._id);
-            const response = await axios.delete(`https://gog-backend-4fkg.onrender.com/api/user/wishlists/${wishlistId}/removeProduct/${item._id}`);
+            const response = await axios.delete(`https://gog-backend-t01u.onrender.com/api/user/wishlists/${wishlistId}/removeProduct/${item._id}`);
             if (response.status === 200) {
                 setWishlists(prevWishlists => {
                     const updatedWishlists = prevWishlists.map(wishlist => {

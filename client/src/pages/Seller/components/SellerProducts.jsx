@@ -10,7 +10,7 @@ export const SellerProducts = ({ seller }) => {
         const fetchProducts = async () => {
             try {
                 // console.log(seller._id);
-                const response = await axios.get(`https://gog-backend-4fkg.onrender.com/api/seller/products/${seller._id}`);
+                const response = await axios.get(`https://gog-backend-t01u.onrender.com/api/seller/products/${seller._id}`);
                 if (response.status === 200) {
                     const sellerProducts = response.data.products;
                     setProductData(sellerProducts);
@@ -26,7 +26,7 @@ export const SellerProducts = ({ seller }) => {
 
     const deleteProduct = async (productId) => {
         try {
-            const response = await axios.delete(`https://gog-backend-4fkg.onrender.com/api/seller/deleteProduct/${productId}`);
+            const response = await axios.delete(`https://gog-backend-t01u.onrender.com/api/seller/deleteProduct/${productId}`);
             window.alert(response.data.product);
             setProductData(productData.filter(product => product._id !== productId));
         } catch (error) {

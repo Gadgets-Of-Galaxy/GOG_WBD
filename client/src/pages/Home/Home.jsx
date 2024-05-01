@@ -19,7 +19,7 @@ export const Home = ({ user }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get("https://gog-backend-4fkg.onrender.com/api/user/products");
+        const response = await axios.get("https://gog-backend-t01u.onrender.com/api/user/products");
         if (response.status === 200) {
           setProducts(response.data.products);
           // console.log("products: ", response.data.products);
@@ -37,7 +37,7 @@ export const Home = ({ user }) => {
   useEffect(() => {
     const fetchpProducts = async () => {
       try {
-        const response = await axios.get("https://gog-backend-4fkg.onrender.com/api/user/products");
+        const response = await axios.get("https://gog-backend-t01u.onrender.com/api/user/products");
         if (response.status === 200) {
           const sortedProducts = response.data.products.sort((a, b) => b.rating - a.rating);
           setFeaturedProducts(sortedProducts);
@@ -55,7 +55,7 @@ export const Home = ({ user }) => {
   useEffect(() => {
     const fetchbProducts = async () => {
       try {
-        const response = await axios.get("https://gog-backend-4fkg.onrender.com/api/user/products");
+        const response = await axios.get("https://gog-backend-t01u.onrender.com/api/user/products");
         if (response.status === 200) {
           const sortedProducts = response.data.products.sort((a, b) => b.sold - a.sold);
           setBestSellingProducts(sortedProducts);

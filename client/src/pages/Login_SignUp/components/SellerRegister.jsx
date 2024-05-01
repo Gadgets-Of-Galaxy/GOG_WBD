@@ -23,14 +23,6 @@ export const SellerRegister = () => {
         });
     };
 
-    useEffect(() => {
-        const getCSRFToken = async () => {
-            const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/getCSRFToken');
-            axios.defaults.headers.post['X-CSRF-Token'] = response.data.CSRFToken;
-            // console.log(response.data.CSRFToken);
-        };
-        getCSRFToken();
-    }, []);
 
     const validateEmail = (email) => {
         const emailRegex = /\S+@\S+\.\S+/;
@@ -102,7 +94,7 @@ export const SellerRegister = () => {
         e.preventDefault();
         if (validateForm()) {
             try {
-                const response = await axios.post('https://gog-backend-4fkg.onrender.com/api/seller/register', formData);
+                const response = await axios.post('https://gog-backend-t01u.onrender.com/api/seller/register', formData);
                 console.log(response.data);
                 navigate('/SellerLogin');
             } catch (error) {

@@ -15,7 +15,7 @@ export const Category = ({ sortedProducts }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/user/products');
+        const response = await axios.get('https://gog-backend-t01u.onrender.com/api/user/products');
         setAllProducts(response.data.products);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -27,7 +27,7 @@ export const Category = ({ sortedProducts }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/user/categories');
+        const response = await axios.get('https://gog-backend-t01u.onrender.com/api/user/categories');
         setCategories(response.data.categories);
       } catch (error) {
         console.error('Error fetching users:', error);

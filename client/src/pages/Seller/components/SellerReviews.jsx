@@ -9,7 +9,7 @@ export const SellerReviews = ({ seller }) => {
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const response = await axios.get(`https://gog-backend-4fkg.onrender.com/api/seller/reviews/${seller._id}`);
+                const response = await axios.get(`https://gog-backend-t01u.onrender.com/api/seller/reviews/${seller._id}`);
                 if (response.status === 200) {
                     const sellerReviews = response.data.reviewsData;
                     const sellerProducts = response.data.productsData;

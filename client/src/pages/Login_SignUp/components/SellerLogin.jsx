@@ -12,14 +12,6 @@ export const SellerLogin = ({ setLoginSeller }) => {
     const navigate = useNavigate();
     const [approvalStatus, setApprovalStatus] = useState(null);
 
-    useEffect(() => {
-        const getCSRFToken = async () => {
-            const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/getCSRFToken');
-            axios.defaults.headers.post['X-CSRF-Token'] = response.data.CSRFToken;
-            console.log(response.data.CSRFToken);
-        };
-        getCSRFToken();
-    }, []);
     
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -66,7 +58,7 @@ export const SellerLogin = ({ setLoginSeller }) => {
         e.preventDefault();
         if (validateForm()) {
             try {
-                const response = await axios.post('https://gog-backend-4fkg.onrender.com/api/seller/login', formData);
+                const response = await axios.post('https://gog-backend-t01u.onrender.com/api/seller/login', formData);
                 const seller = response.data.seller;
                 setLoginSeller(seller);
                 localStorage.setItem('loggedInSeller', JSON.stringify(seller));

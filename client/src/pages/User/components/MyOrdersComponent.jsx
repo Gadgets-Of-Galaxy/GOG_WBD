@@ -9,7 +9,7 @@ export const MyOrdersComponent = ({ user }) => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("https://gog-backend-4fkg.onrender.com/api/user/checkouts");
+        const response = await axios.get("https://gog-backend-t01u.onrender.com/api/user/checkouts");
         const data = await response.data.checkouts;
         const userCheckoutItems = data.filter(item => item.user === user._id);
         userCheckoutItems.sort((a, b) => {

@@ -22,7 +22,7 @@ export const AdminDashboard = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get("https://gog-backend-4fkg.onrender.com/api/user/checkouts");
+        const response = await axios.get("https://gog-backend-t01u.onrender.com/api/user/checkouts");
         const data = await response.data.checkouts;
         const sortedOrders = data.sort(
           (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
@@ -31,7 +31,7 @@ export const AdminDashboard = () => {
         const ordersWithUserDetails = await Promise.all(
           latestOrders.map(async (order) => {
             const userResponse = await axios.get(
-              `https://gog-backend-4fkg.onrender.com/api/user/users/${order.user}`
+              `https://gog-backend-t01u.onrender.com/api/user/users/${order.user}`
             );
             const userData = userResponse.data;
             return {
