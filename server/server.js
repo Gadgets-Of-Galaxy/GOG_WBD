@@ -123,6 +123,10 @@ app.get('/api/getCSRFToken',csrfProtection, (req, res) => {
     }
 });
 
+app.get('/', (req, res) => {
+    res.send('<h1>GOG Backend is Running...</h1>');
+});
+
 // Error Middleware
 app.use(errorHandler);
 
