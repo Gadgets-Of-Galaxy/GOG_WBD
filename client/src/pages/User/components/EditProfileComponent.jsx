@@ -32,7 +32,7 @@ export const EditProfileComponent = ({ user }) => {
         e.preventDefault();
 
         try {
-            const response = await axios.post(`http://localhost:5000/api/user/editprofile/${user._id}`, userInput);
+            const response = await axios.post(`https://gog-backend-4fkg.onrender.com/api/user/editprofile/${user._id}`, userInput);
             console.log(response.data);
             navigate('/myAccount');
         } catch (error) {

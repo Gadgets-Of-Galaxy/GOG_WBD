@@ -74,7 +74,7 @@ const ProductDetailsPage = ({ user }) => {
         const fetchProduct = async () => {
             try {
                 const response = await axios.get(
-                    `http://localhost:5000/api/user/products/${productId}`
+                    `https://gog-backend-4fkg.onrender.com/api/user/products/${productId}`
                 );
                 setProduct(response.data.product);
                 setCurrentImage(response.data.product.imagePath);
@@ -89,7 +89,7 @@ const ProductDetailsPage = ({ user }) => {
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/api/user/reviews`);
+                const response = await axios.get(`https://gog-backend-4fkg.onrender.com/api/user/reviews`);
                 const allReviews = response.data.reviews;
                 const filteredReviews = allReviews.filter(
                     (review) => review.product === productId
@@ -114,7 +114,7 @@ const ProductDetailsPage = ({ user }) => {
         } else {
             try {
                 const response = await axios.post(
-                    `http://localhost:5000/api/user/carts/addToCart`,
+                    `https://gog-backend-4fkg.onrender.com/api/user/carts/addToCart`,
                     {
                         productId: item._id,
                         userId: user._id,
@@ -213,7 +213,7 @@ const ProductDetailsPage = ({ user }) => {
 
         try {
             const response = await axios.post(
-                `http://localhost:5000/api/user/reviews`,
+                `https://gog-backend-4fkg.onrender.com/api/user/reviews`,
                 pobj
             );
             openPopup();

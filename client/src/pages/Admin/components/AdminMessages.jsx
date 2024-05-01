@@ -15,7 +15,7 @@ export const AdminMessages = () => {
         const fetchMessages = async () => {
             try {
                 const response = await axios.get(
-                    "http://localhost:5000/api/admin/messages/"
+                    "https://gog-backend-4fkg.onrender.com/api/admin/messages/"
                 );
                 setMessages(response.data);
             } catch (error) {
@@ -46,7 +46,7 @@ export const AdminMessages = () => {
 
     const handleSendReply = async () => {
         try {
-            const response = await axios.post("http://localhost:5000/sendemail", {
+            const response = await axios.post("https://gog-backend-4fkg.onrender.com/sendemail", {
                 to: replyToEmail,
                 subject: "Reply to your message",
                 text: replyMessage,
@@ -72,7 +72,7 @@ export const AdminMessages = () => {
     const deleteMessage = async (messageId) => {
         try {
             const response = await axios.delete(
-                `http://localhost:5000/api/admin/contactUs/${messageId}`
+                `https://gog-backend-4fkg.onrender.com/api/admin/contactUs/${messageId}`
             );
             window.alert(response.data.message);
             // After deleting the message, update messages state

@@ -9,7 +9,7 @@ export const Users = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/user/users/');
+                const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/user/users/');
                 setUsers(response.data);
             } catch (error) {
                 console.error('Error fetching users:', error);
@@ -20,7 +20,7 @@ export const Users = () => {
 
     const deleteUser = async (userId) => {
         try {
-            const response = await axios.delete(`http://localhost:5000/api/admin/deleUser/${userId}`);
+            const response = await axios.delete(`https://gog-backend-4fkg.onrender.com/api/admin/deleUser/${userId}`);
             window.alert(response.data.user);
             setUsers(users.filter(user => user._id !== userId));
         } catch (error) {

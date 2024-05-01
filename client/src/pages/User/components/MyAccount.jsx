@@ -11,7 +11,7 @@ export const MyAccount = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/user/users/' + user._id);
+                const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/user/users/' + user._id);
                 setUser(response.data);
             } catch (error) {
                 console.error('Error fetching user:', error);
