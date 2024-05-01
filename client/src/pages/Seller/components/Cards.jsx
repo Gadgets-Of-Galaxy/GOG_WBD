@@ -195,7 +195,7 @@ const Cards = (props) => {
           title={card[0].title}
           color={card[0].color}
           barValue={card[0].barValue}
-          value={totalUniqueUsers - 6}
+          value={totalUniqueUsers}
           png={card[0].png}
           series={card[0].series}
           months={months}

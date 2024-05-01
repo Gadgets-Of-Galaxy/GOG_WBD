@@ -42,7 +42,7 @@ export const CheckoutPage = ({ user }) => {
       rzp.open();
       setTimeout(async () => {
         handleCheckout();
-      }, 25000);
+      }, 10000);
       
 
       rzp.on("payment.failed", function (response) {

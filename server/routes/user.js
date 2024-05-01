@@ -7,11 +7,8 @@ const Cart = require('../models/Cart');
 const ContactUs = require('../models/ContactUs');
 const Category = require('../models/Category');
 const Review = require('../models/Review');
-// const userAuth = require('../middlewares/authMiddleware');
 const bcrypt = require('bcrypt');
-// const jwt = require('jsonwebtoken');
 const client = require('../utils/redis');
-// const JWT_SECRET_KEY = 'jwt_secret_key';
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
@@ -39,7 +36,6 @@ router.post('/register', async (req, res) => {
         });
 
         await newUser.save();
-        // const token = jwt.sign({ email: newUser.email, userId: newUser._id }, JWT_SECRET_KEY);
         res.status(201).json({ message: 'User created successfully' });
         console.log("Successfully created");
     } catch (error) {
@@ -59,19 +55,9 @@ router.post('/login', async (req, res) => {
         if (!passwordMatch) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
-        // const token = jwt.sign({
-        //     email: user.email,
-        //     userId: user._id,
-        //     isUser: user.isUser,
-        //     isSeller: user.isSeller,
-        //     isAdmin: user.isAdmin
-        // }, JWT_SECRET_KEY);
-        // console.log(token);
-
         res.status(200).json({
             message: 'login successful',
             user,
-            // token,
             isUser: user.isUser,
             isSeller: user.isSeller,
             isAdmin: user.isAdmin
@@ -84,7 +70,18 @@ router.post('/login', async (req, res) => {
 
 router.get('/categories', async (req, res) => {
     try {
-        const categories = await Category.find({});
+        const cacheKey = 'categories-data';
+        let categories = await client.get(cacheKey);
+
+        if (!categories) {
+            categories = await Category.find({});
+            client.set(cacheKey, JSON.stringify(categories));
+            console.log('Categories data set into Redis cache');
+        } else {
+            categories = JSON.parse(categories);
+            console.log('Categories data retrieved from Redis cache');
+        }
+
         res.json({ categories });
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch categories' });
@@ -115,7 +112,6 @@ router.get('/products/:id', async (req, res) => {
 
 router.post('/carts/addToCart', async (req, res) => {
     const { productId, userId } = req.body;
-    // console.log(req.body);
 
     try {
         let userCart = await Cart.findOne({ user: userId });

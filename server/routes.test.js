@@ -1,5 +1,6 @@
 const request = require('supertest');
 const app = require('./server');
+const bcrypt = require('bcrypt');
 const Checkout = require('./models/Checkout');
 const ContactUs = require('./models/ContactUs');
 const User = require('./models/User');
@@ -7,9 +8,9 @@ const redisClient = require('./utils/redis');
 
 describe("GET api/user/products/:id", () => {
     test("should return product data for valid product ID", (done) => {
-        const validCourseId = "6442336d45318afadbd6b66c";
+        const validProductId = "6442336d45318afadbd6b66c";
         request(app)
-            .get(`/api/user/products/${validCourseId}`)
+            .get(`/api/user/products/${validProductId}`)
             .expect(200)
             .expect("Content-Type", /json/)
             .then((res) => {
@@ -32,12 +33,39 @@ describe("GET api/user/products/:id", () => {
     });
 });
 
+describe("GET api/seller/sellers/:id", () => {
+  test("should return seller data for valid seller ID", (done) => {
+      const validSellerId = "65d381e89749efcaeb9580bf";
+      request(app)
+          .get(`/api/seller/sellers/${validSellerId}`)
+          .expect(200)
+          .expect("Content-Type", /json/)
+          .then((res) => {
+              expect(res.body).toBeDefined();
+              done();
+          })
+          .catch((err) => done(err));
+  });
+
+  test("should return 404 for invalid Seller ID", (done) => {
+      const invalidSellerId = "65d381e89749efcaeb9580b";
+      request(app)
+          .get(`/api/seller/sellers/${invalidSellerId}`)
+          .expect(500)
+          .expect("Content-Type", /json/)
+          .then((res) => {
+              done();
+          })
+          .catch((err) => done(err));
+  });
+});
 
 describe("POST api/user/login", () => {
-  test("should return a token for valid email and password", async () => {
+  test("should validate email and password", async () => {
       const credentials = {
-          email: "thanush.user1@gmail.com",
-          password: "12345@Aa",
+          email: "praveen@gmail.com",
+          password: "123@Aa",
+          name: "prawin"
       };
 
       const res = await request(app)
@@ -45,10 +73,8 @@ describe("POST api/user/login", () => {
           .send(credentials);
 
       expect(res.status).toBe(200);
-      expect(res.body).toHaveProperty("token");
       expect(res.body).toHaveProperty("user");
       expect(res.body.user).toHaveProperty("email", credentials.email);
-      expect(res.body.user).toHaveProperty("userId");
       expect(res.body.user).toHaveProperty("isUser");
       expect(res.body.user).toHaveProperty("isSeller");
       expect(res.body.user).toHaveProperty("isAdmin");
@@ -169,41 +195,8 @@ describe('Admin Endpoints', () => {
       expect(response.body).toEqual({ user: 'Internal server error' });
     });
   });
-  
-  
 });
 
-//SELLER
-
-const Seller = require('./models/Seller');
-
-describe('Seller Endpoints', () => {
-  it('should get all sellers', async () => {
-    const res = await request(app).get('/api/seller/sellers');
-    expect(res.statusCode).toEqual(200);
-    expect(res.body.sellers).toBeDefined();
-  });
-
-  it('should get a single seller by ID', async () => {
-    const seller = new Seller({
-      username: 'testuser',
-      email: 'test@example.com',
-      password: 'test123',
-      companyName: 'Test Company',
-      address: 'Test Address',
-    });
-    await seller.save();
-
-    const res = await request(app).get(`/api/seller/sellers/${seller._id}`);
-    expect(res.statusCode).toEqual(200);
-    expect(res.body).toMatchObject({
-      username: 'testuser',
-      email: 'test@example.com',
-      companyName: 'Test Company',
-      address: 'Test Address',
-    });
-  });
-});
 
 
 

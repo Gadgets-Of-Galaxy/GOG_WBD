@@ -31,28 +31,6 @@ export const CartComponent = ({ user }) => {
         }
     };
 
-    const updateCartItemQuantity = async (cartItemId, newQuantity) => {
-        try {
-            const response = await axios.put(
-                `https://gog-backend-t01u.onrender.com/api/user/carts/${cartItemId}/updateQuantity`,
-                { qty: newQuantity }
-            );
-
-            const updatedItem = response.data.updatedCartItem;
-            updateCartItems(updatedItem);
-        } catch (error) {
-            console.error('Error updating Cart Item quantity:', error);
-        }
-    };
-
-    const updateCartItems = (updatedItem) => {
-        const updatedCartItems = cartItems.map(item =>
-            item._id === updatedItem._id ? updatedItem : item
-        );
-        setCartItems(updatedCartItems);
-        calculateSubtotal(updatedCartItems);
-    };
-
     const calculateSubtotal = (items) => {
         const total = items.reduce((acc, item) => {
             const itemTotal = item.price * item.qty;
@@ -89,22 +67,7 @@ export const CartComponent = ({ user }) => {
                                         </td>
                                         <td className="cart-title">{item.title}</td>
                                         <td className="cart-price">Rs.{item.price}</td>
-                                        <td className="cart-qty">
-                                            <button
-                                                className="quantity-button"
-                                                onClick={() => updateCartItemQuantity(item._id, item.qty - 1)}
-                                                disabled={item.qty <= 1}
-                                            >
-                                                -
-                                            </button>
-                                            {item.qty}
-                                            <button
-                                                className="quantity-button"
-                                                onClick={() => updateCartItemQuantity(item._id, item.qty + 1)}
-                                            >
-                                                +
-                                            </button>
-                                        </td>
+                                        <td className="cart-qty">{item.qty}</td>
                                         <td>
                                             <button className="delete-button" onClick={() => deleteFromCart(item._id)}>Delete</button>
                                         </td>
