@@ -10,6 +10,7 @@ const Review = require('../models/Review');
 const userAuth = require('../middlewares/authMiddleware');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const client = require('../utils/redis');
 const JWT_SECRET_KEY = 'jwt_secret_key';
 const router = express.Router();
 
@@ -38,7 +39,7 @@ router.post('/register', async (req, res) => {
         });
 
         await newUser.save();
-        // const token = jwt.sign({ email: newUser.email, userId: newUser._id }, JWT_SECRET_KEY);
+        const token = jwt.sign({ email: newUser.email, userId: newUser._id }, JWT_SECRET_KEY);
         res.status(201).json({ message: 'User created successfully', token });
         console.log("Successfully created");
     } catch (error) {
@@ -47,7 +48,7 @@ router.post('/register', async (req, res) => {
 });
 
 
-router.post('/login', async (req, res) => {
+router.post('/login', userAuth, async (req, res) => {
     const { email, password } = req.body;
     try {
         const user = await User.findOne({ email });
@@ -58,19 +59,19 @@ router.post('/login', async (req, res) => {
         if (!passwordMatch) {
             return res.status(401).json({ message: 'Invalid email or password' });
         }
-        // const token = jwt.sign({
-        //     email: user.email,
-        //     userId: user._id,
-        //     isUser: user.isUser,
-        //     isSeller: user.isSeller,
-        //     isAdmin: user.isAdmin
-        // }, JWT_SECRET_KEY);
+        const token = jwt.sign({
+            email: user.email,
+            userId: user._id,
+            isUser: user.isUser,
+            isSeller: user.isSeller,
+            isAdmin: user.isAdmin
+        }, JWT_SECRET_KEY);
         // console.log(token);
 
         res.status(200).json({
             message: 'login successful',
             user,
-            // token,
+            token,
             isUser: user.isUser,
             isSeller: user.isSeller,
             isAdmin: user.isAdmin
@@ -112,7 +113,7 @@ router.get('/products/:id', async (req, res) => {
     }
 });
 
-router.post('/carts/addToCart', async (req, res) => {
+router.post('/carts/addToCart', userAuth, async (req, res) => {
     const { productId, userId } = req.body;
     // console.log(req.body);
 
@@ -153,7 +154,7 @@ router.post('/carts/addToCart', async (req, res) => {
 });
 
 
-router.delete('/wishlists/:wishlistId/removeProduct/:productId', async (req, res) => {
+router.delete('/wishlists/:wishlistId/removeProduct/:productId', userAuth, async (req, res) => {
     const { wishlistId, productId } = req.params;
 
     try {
@@ -184,7 +185,7 @@ router.delete('/wishlists/:wishlistId/removeProduct/:productId', async (req, res
 });
 
 
-router.get('/carts/:userId', async (req, res) => {
+router.get('/carts/:userId', userAuth, async (req, res) => {
     const userId = req.params.userId;
 
     try {
@@ -199,7 +200,7 @@ router.get('/carts/:userId', async (req, res) => {
     }
 });
 
-router.delete('/carts/:userId/deleteItem/:itemId', async (req, res) => {
+router.delete('/carts/:userId/deleteItem/:itemId', userAuth, async (req, res) => {
     const userId = req.params.userId;
     const itemId = req.params.itemId;
 
@@ -218,7 +219,7 @@ router.delete('/carts/:userId/deleteItem/:itemId', async (req, res) => {
     }
 });
 
-router.post('/checkout', async (req, res) => {
+router.post('/checkout', userAuth, async (req, res) => {
     try {
         const { totalQty, totalCost, items, user } = req.body;
         // console.log(items);
@@ -232,10 +233,14 @@ router.post('/checkout', async (req, res) => {
         for (const item of items) {
             await Product.updateOne(
                 { _id: item.productId },
-                { $inc: { sold: item.qty }},
-                {$dec: { stock: item.qty }}
+                { 
+                    $inc: { sold: item.qty, stock: -item.qty } 
+                }
             );
+            
         }
+        client.del('orders-data');
+        console.log("key pair deleted from cache due to update")
         res.status(201).json({ message: 'Checkout successful', checkout });
         await Cart.deleteMany({ user: user });
     } catch (error) {
@@ -244,7 +249,7 @@ router.post('/checkout', async (req, res) => {
     }
 });
 
-router.get('/checkouts/:userId', async (req, res) => {
+router.get('/checkouts/:userId', userAuth, async (req, res) => {
     const userId = req.params.userId;
     try {
         const userCheckouts = await Checkout.find({ user: userId });
@@ -273,7 +278,7 @@ router.get('/checkouts', async (req, res) => {
     }
 });
 
-router.get('/wishlists/:userId', async (req, res) => {
+router.get('/wishlists/:userId', userAuth, async (req, res) => {
     const userId = req.params.userId;
     // console.log(userId);
     try {
@@ -286,7 +291,7 @@ router.get('/wishlists/:userId', async (req, res) => {
     }
 });
 
-router.post('/wishlists/create/:id', async (req, res) => {
+router.post('/wishlists/create/:id', userAuth, async (req, res) => {
     const wishlistName = req.body.name;
     const userId = req.params.id;
 
@@ -304,7 +309,7 @@ router.post('/wishlists/create/:id', async (req, res) => {
     }
 });
 
-router.post('/wishlists/addProduct/:wishlistId', async (req, res) => {
+router.post('/wishlists/addProduct/:wishlistId', userAuth, async (req, res) => {
     const wishlistId = req.params.wishlistId;
     const productId = req.body.productId;
     try {
@@ -337,7 +342,7 @@ router.post('/wishlists/addProduct/:wishlistId', async (req, res) => {
     }
 });
 
-router.post('/editprofile/:id', async (req, res) => {
+router.post('/editprofile/:id', userAuth, async (req, res) => {
     const user_id = req.params.id;
     // console.log(req.body);
 
@@ -429,6 +434,33 @@ router.get('/reviews', async (req, res) => {
     }
 });
 
+router.put('/carts/:cartItemId/updateQuantity', async (req, res) => {
+    const cartItemId = req.params.cartItemId;
+    const { newQty } = req.body; // Assuming newQty is provided in the request body
+
+    try {
+        // Find the cart item by ID and update the quantity directly using assignment
+        const cartItem = await Cart.findById(cartItemId);
+        console.log(cartItem);
+
+        if (!cartItem) {
+            return res.status(404).json({ message: 'Cart item not found' });
+        }
+
+        // Update the quantity of the cart item
+        cartItem.qty = newQty;
+
+        // Save the updated cart item back to the database
+        const updatedCartItem = await cartItem.save();
+
+        res.status(200).json({ message: 'Cart item quantity updated successfully', updatedCartItem });
+    } catch (error) {
+        console.error('Error updating cart item quantity:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
 router.post('/reviews', async (req, res) => {
     const { productId, userId, reviewRating, reviewText, reviewTitle } = req.body;
     // console.log(req.body);
@@ -459,5 +491,7 @@ router.post('/reviews', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
+
 
 module.exports = router;

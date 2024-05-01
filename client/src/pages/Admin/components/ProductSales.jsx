@@ -12,7 +12,7 @@ export const ProductSales = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get(`https://gog-backend-4fkg.onrender.com/api/admin/sales/${selectedOption}`);
+                const response = await axios.get(`http://localhost:5000/api/admin/sales/${selectedOption}`);
                 setSalesData(response.data);
             } catch (error) {
                 console.error('Error fetching sales data:', error);

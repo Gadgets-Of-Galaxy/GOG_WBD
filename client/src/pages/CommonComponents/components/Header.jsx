@@ -27,7 +27,7 @@ export const Header = ({ user, onFilteredProducts }) => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/user/products');
+        const response = await axios.get('http://localhost:5000/api/user/products');
         setProducts(response.data.products);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -99,8 +99,7 @@ export const Header = ({ user, onFilteredProducts }) => {
 
   const handleSearch = async (query) => {
     try {
-      const response = await axios.get("https://gog-backend-4fkg.onrender.com/api/user/products");
-      const allProducts = response.data.products;
+      const allProducts = products;
       const filteredProducts = allProducts.filter((product) =>
         product.title.toLowerCase().includes(query.toLowerCase())
       );
@@ -115,7 +114,7 @@ export const Header = ({ user, onFilteredProducts }) => {
   async function handlecategoryProducts(event) {
     const categoryTitle = event.currentTarget.querySelector('.category-list .category-left').textContent.trim();
     try {
-      const response = await axios.get(`https://gog-backend-4fkg.onrender.com/api/user/products/category/${encodeURIComponent(categoryTitle)}`);
+      const response = await axios.get(`http://localhost:5000/api/user/products/category/${encodeURIComponent(categoryTitle)}`);
       // console.log(response.data);
       if (response.status === 200) {
         const products = await response.data;

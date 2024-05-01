@@ -74,7 +74,7 @@ const ProductDetailsPage = ({ user }) => {
         const fetchProduct = async () => {
             try {
                 const response = await axios.get(
-                    `https://gog-backend-4fkg.onrender.com/api/user/products/${productId}`
+                    `http://localhost:5000/api/user/products/${productId}`
                 );
                 setProduct(response.data.product);
                 setCurrentImage(response.data.product.imagePath);
@@ -89,7 +89,7 @@ const ProductDetailsPage = ({ user }) => {
     useEffect(() => {
         const fetchReviews = async () => {
             try {
-                const response = await axios.get(`https://gog-backend-4fkg.onrender.com/api/user/reviews`);
+                const response = await axios.get(`http://localhost:5000/api/user/reviews`);
                 const allReviews = response.data.reviews;
                 const filteredReviews = allReviews.filter(
                     (review) => review.product === productId
@@ -114,7 +114,7 @@ const ProductDetailsPage = ({ user }) => {
         } else {
             try {
                 const response = await axios.post(
-                    `https://gog-backend-4fkg.onrender.com/api/user/carts/addToCart`,
+                    `http://localhost:5000/api/user/carts/addToCart`,
                     {
                         productId: item._id,
                         userId: user._id,
@@ -213,7 +213,7 @@ const ProductDetailsPage = ({ user }) => {
 
         try {
             const response = await axios.post(
-                `https://gog-backend-4fkg.onrender.com/api/user/reviews`,
+                `http://localhost:5000/api/user/reviews`,
                 pobj
             );
             openPopup();
@@ -277,7 +277,7 @@ const ProductDetailsPage = ({ user }) => {
                                     <div className="prd-dtl">
                                         <h2>About this item:</h2>
                                         <p>{ product.description }</p>
-                                        <h2 className="feauters">Feauters</h2>
+                                        <h2 className="feauters">Features</h2>
                                         <ul>
                                             <li>{ product.features1 }</li>
                                             <li>{ product.features2 }</li>

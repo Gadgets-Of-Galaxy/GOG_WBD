@@ -8,6 +8,7 @@ import { UserNavLinks } from "./UserNavLinks";
 export const MyOrders = ({ user }) => {
   return (
     <div className="myAccount">
+      <div className="back-drop"></div>
       <UserNavLinks activeLink="MyOrders" />
       <MyOrdersComponent user={user} />
     </div>

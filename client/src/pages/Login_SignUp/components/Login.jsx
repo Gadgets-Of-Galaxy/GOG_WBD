@@ -16,7 +16,7 @@ export const Login = ({ setLoginUser }) => {
 
     useEffect(() => {
         const getCSRFToken = async () => {
-            const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/getCSRFToken');
+            const response = await axios.get('http://localhost:5000/api/getCSRFToken');
             axios.defaults.headers.post['X-CSRF-Token'] = response.data.CSRFToken;
             // console.log(response.data.CSRFToken);
         };
@@ -48,13 +48,13 @@ export const Login = ({ setLoginUser }) => {
                     formData.isUser = true;
                 }
 
-                const response = await axios.post(`https://gog-backend-4fkg.onrender.com/api/user${endpoint}`, formData);
+                const response = await axios.post(`http://localhost:5000/api/user${endpoint}`, formData);
 
                 if (response.status === 200) {
-                    const { user, isUser, isAdmin } = response.data;
+                    const { user, token, isUser, isAdmin } = response.data;
                     setLoginUser(user);
                     localStorage.setItem('loggedInUser', JSON.stringify(user));
-                    // localStorage.setItem('token', token);
+                    localStorage.setItem('token', token);
 
                     if (isUser) {
                         navigate('/myAccount');

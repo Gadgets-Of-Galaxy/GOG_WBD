@@ -65,7 +65,7 @@ function App() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/user/users/' + loginuser._id);
+        const response = await axios.get('http://localhost:5000/api/user/users/' + loginuser._id);
         setUser(response.data);
         // console.log(user);
       } catch (error) {
@@ -80,7 +80,7 @@ function App() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/user/users');
+        const response = await axios.get('http://localhost:5000/api/user/users');
         setUsers(response.data);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -92,7 +92,7 @@ function App() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/user/products');
+        const response = await axios.get('http://localhost:5000/api/user/products');
         setProducts(response.data.products);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -104,7 +104,7 @@ function App() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/user/categories');
+        const response = await axios.get('http://localhost:5000/api/user/categories');
         setCategories(response.data.categories);
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -116,7 +116,7 @@ function App() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/admin/orders');
+        const response = await axios.get('http://localhost:5000/api/admin/orders');
         setOrders(response.data);
       } catch (error) {
         console.error('Error fetching Orders:', error);
@@ -128,7 +128,7 @@ function App() {
   useEffect(() => {
     const fetchMessages = async () => {
       try {
-        const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/admin/messages');
+        const response = await axios.get('http://localhost:5000/api/admin/messages');
         setMessages(response.data);
       } catch (error) {
         console.error('Error fetching admin messages:', error);
@@ -140,7 +140,7 @@ function App() {
   useEffect(() => {
     const fetchSellers = async () => {
       try {
-        const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/seller');
+        const response = await axios.get('http://localhost:5000/api/seller');
         setSellers(response.data.sellers);
       } catch (error) {
         console.error('Error fetching Sellers:', error);
@@ -160,7 +160,7 @@ function App() {
     const fetchUser = async () => {
       try {
         if (loginuser) {
-          const response = await axios.get(`https://gog-backend-4fkg.onrender.com/api/user/users/${loginuser._id}`);
+          const response = await axios.get(`http://localhost:5000/api/user/users/${loginuser._id}`);
           setLoginUser(response.data);
         }
       } catch (error) {
@@ -174,7 +174,7 @@ function App() {
     const fetchSeller = async () => {
       try {
         if (loginSeller) {
-          const response = await axios.get(`https://gog-backend-4fkg.onrender.com/api/seller/sellers/${loginSeller._id}`);
+          const response = await axios.get(`http://localhost:5000/api/seller/sellers/${loginSeller._id}`);
           setLoginSeller(response.data);
         }
       } catch (error) {

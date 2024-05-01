@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from 'react-router-dom';
 import axios from "axios";
 import "../styles/Login.css";
@@ -12,17 +12,7 @@ export const SellerRegister = () => {
         companyName: '',
         address: '',
     });
-
-    useEffect(() => {
-        const getCSRFToken = async () => {
-            const response = await axios.get('https://gog-backend-4fkg.onrender.com/api/getCSRFToken');
-            axios.defaults.headers.post['X-CSRF-Token'] = response.data.CSRFToken;
-            console.log(response.data.CSRFToken);
-        };
-        getCSRFToken();
-    }, []);
-
-    const [errors, setErrors] = useState({});
+    const [error, setError] = useState('');
     const navigate = useNavigate();
 
     const handleChange = (e) => {
@@ -33,13 +23,23 @@ export const SellerRegister = () => {
         });
     };
 
+    useEffect(() => {
+        const getCSRFToken = async () => {
+            const response = await axios.get('http://localhost:5000/api/getCSRFToken');
+            axios.defaults.headers.post['X-CSRF-Token'] = response.data.CSRFToken;
+            // console.log(response.data.CSRFToken);
+        };
+        getCSRFToken();
+    }, []);
+
     const validateEmail = (email) => {
         const emailRegex = /\S+@\S+\.\S+/;
         return emailRegex.test(email);
     };
 
     const validatePassword = (password) => {
-        const passwordRegex = /(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[@$!%?&])[A-Za-z\d@$!%?&]{8,}/;
+        if (!password) return true;
+        const passwordRegex = /^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.[@$!%?&])[A-Za-z\d@$!%?&]{8,}$/;
         return passwordRegex.test(password);
     };
 
@@ -53,6 +53,10 @@ export const SellerRegister = () => {
         return companyNameRegex.test(companyName);
     };
 
+    const validateAddress = (address) => {
+        return address.trim() !== '';
+    };
+
     const handleBlur = (e) => {
         const { name, value } = e.target;
         let errorMsg = '';
@@ -60,9 +64,10 @@ export const SellerRegister = () => {
             case 'email':
                 errorMsg = !validateEmail(value) ? 'Email is invalid' : '';
                 break;
-            case 'password':
-                errorMsg = !validatePassword(value) ? 'Password must contain at least one lowercase character, one uppercase character, one number, one special character, and be at least 8 characters long' : '';
-                break;
+                case 'password':
+                    errorMsg = !value ? '' : !validatePassword(value) ? 'Password must contain at least one lowercase character, one uppercase character, one number, one special character, and be at least 8 characters long' : '';
+                    break;
+                
             case 'confirmPassword':
                 errorMsg = value !== formData.password ? 'Passwords do not match' : '';
                 break;
@@ -72,33 +77,32 @@ export const SellerRegister = () => {
             case 'companyName':
                 errorMsg = !validateCompanyName(value) ? 'Company Name must contain only alphabets' : '';
                 break;
+            case 'address':
+                errorMsg = !validateAddress(value) ? 'Address is required' : '';
+                break;
             default:
                 break;
         }
-        setErrors({ ...errors, [name]: errorMsg });
+        setError(errorMsg);
     };
 
     const validateForm = () => {
         const { email, password, confirmPassword, username, companyName, address } = formData;
-        let newErrors = {};
+        let isValid = true;
 
-        newErrors.email = !email ? 'Email is required' : '';
-        newErrors.password = !password ? 'Password is required' : '';
-        newErrors.confirmPassword = !confirmPassword ? 'Confirm Password is required' : '';
-        newErrors.username = !username ? 'Username is required' : '';
-        newErrors.companyName = !companyName ? 'Company Name is required' : '';
-        newErrors.address = !address ? 'Address is required' : '';
+        if (!email || !password || !confirmPassword || !username || !companyName || !address) {
+            setError('All fields are required');
+            isValid = false;
+        }
 
-        setErrors(newErrors);
-
-        return !Object.values(newErrors).some(error => error);
+        return isValid;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (validateForm()) {
             try {
-                const response = await axios.post('https://gog-backend-4fkg.onrender.com/api/seller/register', formData);
+                const response = await axios.post('http://localhost:5000/api/seller/register', formData);
                 console.log(response.data);
                 navigate('/SellerLogin');
             } catch (error) {
@@ -115,6 +119,7 @@ export const SellerRegister = () => {
                         <div className="formBx">
                             <form onSubmit={ handleSubmit }>
                                 <h2>Register as a Seller</h2><br />
+                                
                                 <label htmlFor="username">Username</label>
                                 <input
                                     type="text"
@@ -126,7 +131,6 @@ export const SellerRegister = () => {
                                     onBlur={ handleBlur }
                                     required
                                 />
-                                {errors.username && <span className="error">{errors.username}</span>}
                                 <br />
                                 <label htmlFor="email">Email</label>
                                 <input
@@ -139,7 +143,6 @@ export const SellerRegister = () => {
                                     onBlur={ handleBlur }
                                     required
                                 />
-                                {errors.email && <span className="error">{errors.email}</span>}
                                 <br />
                                 <label htmlFor="password">Password</label>
                                 <input
@@ -152,7 +155,6 @@ export const SellerRegister = () => {
                                     onBlur={ handleBlur }
                                     required
                                 />
-                                {errors.password && <span className="error">{errors.password}</span>}
                                 <br />
                                 <label htmlFor="confirmPassword">Confirm Password</label>
                                 <input
@@ -165,7 +167,6 @@ export const SellerRegister = () => {
                                     onBlur={ handleBlur }
                                     required
                                 />
-                                {errors.confirmPassword && <span className="error">{errors.confirmPassword}</span>}
                                 <br />
                                 <label htmlFor="companyName">Company Name</label>
                                 <input
@@ -178,7 +179,6 @@ export const SellerRegister = () => {
                                     onBlur={ handleBlur }
                                     required
                                 />
-                                {errors.companyName && <span className="error">{errors.companyName}</span>}
                                 <br />
                                 <label htmlFor="address">Address</label>
                                 <input
@@ -191,7 +191,8 @@ export const SellerRegister = () => {
                                     onBlur={ handleBlur }
                                     required
                                 />
-                                {errors.address && <span className="error">{errors.address}</span>}
+                                <br />
+                                {error && <span className="error">{error}</span>}
                                 <br />
                                 <input
                                     type="submit"
