@@ -5,7 +5,7 @@ This is an application that demonstrates an E-commerce website using the nodejs.
 products from MongoDB database and displays them. The loading page directly takes to home page.
 We have three types of users.  
 Users can register and login through gmail, buy products and can add reviews. Click on any product to get more information including pricing. Users can select items and 
-add them to their shopping cart and wishlist.
+add them to their shopping cart and wishlist
 Sellers can add products, check the reviews and manage his dashboard.
 Admin can approve or revoke sellers and can give reply to mesaages of users.
 
